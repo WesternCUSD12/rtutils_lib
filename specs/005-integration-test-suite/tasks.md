@@ -212,30 +212,30 @@ Test the ability to run all methods against a live RT instance.
 
 Generate machine-readable JSON reports.
 
-- [ ] T033 [P] [US3] Implement `internal/testrunner/reporter.go` with:
+- [X] T033 [P] [US3] Implement `internal/testrunner/reporter.go` with:
   - GenerateReport(results []TestResult) TestReport function
   - JSON marshaling with proper formatting
   - Timestamp generation (ISO 8601)
   - Statistics calculation (passed, failed, infrastructure errors)
   - Summary message generation
 
-- [ ] T034 [P] [US3] Implement `internal/testrunner/reporter_test.go`
+- [X] T034 [P] [US3] Implement `internal/testrunner/reporter_test.go`
   - Test report generation with mixed results
   - Test JSON validity
   - Test statistics accuracy
   - Test summary message
 
-- [ ] T035 [P] [US3] Update `cmd/rtutils-test-suite/main.go`:
+- [X] T035 [P] [US3] Update `cmd/rtutils-test-suite/main.go`:
   - Call reporter to generate JSON
   - Write report to file (specify via --report flag or default: `results.json`)
   - Pretty-print report to stdout
 
-- [ ] T036 [P] [US3] Generate example report output:
+- [X] T036 [P] [US3] Generate example report output:
   - Run full test suite
   - Save to `examples/test-report-sample.json`
   - Update quickstart.md with example
 
-- [ ] T037 [US3] Commit US3: "feat: US3 - JSON test report generation"
+- [X] T037 [US3] Commit US3: "feat: US3 - JSON test report generation"
 
 ---
 
