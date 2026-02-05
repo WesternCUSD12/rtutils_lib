@@ -1,0 +1,160 @@
+{
+  "execution": {
+    "timestamp": "2026-02-05T18:55:41Z",
+    "duration_seconds": 65.079278791,
+    "rt_instance": "https://tickets.wc-12.com",
+    "total_tests": 18,
+    "passed": 18,
+    "failed": 0,
+    "infrastructure_errors": 0,
+    "assertion_failures": 0,
+    "method_errors": 0,
+    "summary": "18 passed, 0 failed (Infrastructure: 0, Assertion: 0, Method: 0)"
+  },
+  "results": [
+    {
+      "test_id": "ticket-get-1",
+      "method": "TicketService.Get",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:55:41Z",
+      "duration_ms": 1795,
+      "result_summary": "Successfully executed TicketService.Get"
+    },
+    {
+      "test_id": "ticket-getbyurl-1",
+      "method": "TicketService.GetByURL",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:55:43Z",
+      "duration_ms": 1703,
+      "result_summary": "Successfully executed TicketService.GetByURL"
+    },
+    {
+      "test_id": "ticket-search-1",
+      "method": "TicketService.Search",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:55:45Z",
+      "duration_ms": 1755,
+      "result_summary": "Successfully executed TicketService.Search"
+    },
+    {
+      "test_id": "ticket-search-subject-1",
+      "method": "TicketService.SearchBySubject",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:55:47Z",
+      "duration_ms": 10866,
+      "result_summary": "Successfully executed TicketService.SearchBySubject"
+    },
+    {
+      "test_id": "user-get-1",
+      "method": "UserService.Get",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:55:58Z",
+      "duration_ms": 1511,
+      "result_summary": "Successfully executed UserService.Get"
+    },
+    {
+      "test_id": "user-search-1",
+      "method": "UserService.Search",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:55:59Z",
+      "duration_ms": 1480,
+      "result_summary": "Successfully executed UserService.Search"
+    },
+    {
+      "test_id": "user-search-username-exact-1",
+      "method": "UserService.SearchByUsernameExact",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:01Z",
+      "duration_ms": 1707,
+      "result_summary": "Successfully executed UserService.SearchByUsernameExact"
+    },
+    {
+      "test_id": "user-search-username-partial-1",
+      "method": "UserService.SearchByUsernamePartial",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:02Z",
+      "duration_ms": 1527,
+      "result_summary": "Successfully executed UserService.SearchByUsernamePartial"
+    },
+    {
+      "test_id": "user-search-email-exact-1",
+      "method": "UserService.SearchByEmailExact",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:04Z",
+      "duration_ms": 1514,
+      "result_summary": "Successfully executed UserService.SearchByEmailExact"
+    },
+    {
+      "test_id": "user-search-email-partial-1",
+      "method": "UserService.SearchByEmailPartial",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:05Z",
+      "duration_ms": 1443,
+      "result_summary": "Successfully executed UserService.SearchByEmailPartial"
+    },
+    {
+      "test_id": "user-search-name-exact-1",
+      "method": "UserService.SearchByNameExact",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:07Z",
+      "duration_ms": 1181,
+      "result_summary": "Successfully executed UserService.SearchByNameExact"
+    },
+    {
+      "test_id": "user-search-name-partial-1",
+      "method": "UserService.SearchByNamePartial",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:08Z",
+      "duration_ms": 1094,
+      "result_summary": "Successfully executed UserService.SearchByNamePartial"
+    },
+    {
+      "test_id": "asset-get-1",
+      "method": "AssetService.Get",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:09Z",
+      "duration_ms": 1197,
+      "result_summary": "Successfully executed AssetService.Get"
+    },
+    {
+      "test_id": "asset-search-1",
+      "method": "AssetService.Search",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:10Z",
+      "duration_ms": 30592,
+      "result_summary": "Successfully executed AssetService.Search"
+    },
+    {
+      "test_id": "asset-search-name-exact-1",
+      "method": "AssetService.SearchByNameExact",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:41Z",
+      "duration_ms": 1578,
+      "result_summary": "Successfully executed AssetService.SearchByNameExact"
+    },
+    {
+      "test_id": "asset-search-name-partial-1",
+      "method": "AssetService.SearchByNamePartial",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:42Z",
+      "duration_ms": 1586,
+      "result_summary": "Successfully executed AssetService.SearchByNamePartial"
+    },
+    {
+      "test_id": "asset-search-customfield-exact-1",
+      "method": "AssetService.SearchByCustomFieldExact",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:44Z",
+      "duration_ms": 1426,
+      "result_summary": "Successfully executed AssetService.SearchByCustomFieldExact"
+    },
+    {
+      "test_id": "asset-search-customfield-partial-1",
+      "method": "AssetService.SearchByCustomFieldPartial",
+      "status": "PASS",
+      "start_time": "2026-02-05T18:56:45Z",
+      "duration_ms": 1115,
+      "result_summary": "Successfully executed AssetService.SearchByCustomFieldPartial"
+    }
+  ]
+}

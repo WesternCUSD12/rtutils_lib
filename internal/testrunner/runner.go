@@ -1,6 +1,7 @@
 package testrunner
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -42,11 +43,7 @@ func (tr *TestRunner) Run() (*TestReport, error) {
 	}
 
 	// Create RT client using token-based authentication
-	// For now, use username as a simple token placeholder
-	// In production, this would use RT_TOKEN env var or actual token generation
-	token := fmt.Sprintf("%s:%s", tr.Config.Username, tr.Config.Password)
-	
-	client := rtutils_lib.NewClient(tr.Config.URL, token)
+	client := rtutils_lib.NewClient(tr.Config.URL, tr.Config.Token)
 	tr.Client = client
 
 	// Execute each test case sequentially
@@ -137,10 +134,184 @@ func (tr *TestRunner) executeTest(testCase TestCase) *TestResult {
 
 // callMethod invokes the appropriate method on the RT client
 func (tr *TestRunner) callMethod(testCase TestCase) (interface{}, error) {
-	// This is a placeholder for method invocation
-	// In reality, this would use reflection or a method routing map
-	// For now, return nil to indicate method not implemented
-	return nil, fmt.Errorf("method %s.%s not implemented", testCase.ServiceType, testCase.MethodName)
+	ctx := context.Background()
+
+	switch testCase.ServiceType {
+	case "Ticket":
+		return tr.callTicketMethod(ctx, testCase)
+	case "User":
+		return tr.callUserMethod(ctx, testCase)
+	case "Asset":
+		return tr.callAssetMethod(ctx, testCase)
+	default:
+		return nil, fmt.Errorf("unknown service type: %s", testCase.ServiceType)
+	}
+}
+
+// callTicketMethod invokes a method on the Tickets service
+func (tr *TestRunner) callTicketMethod(ctx context.Context, testCase TestCase) (interface{}, error) {
+	switch testCase.Operation {
+	case "Get":
+		id, ok := testCase.InputParams["id"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'id' parameter")
+		}
+		return tr.Client.Tickets.Get(ctx, id)
+
+	case "GetByURL":
+		url, ok := testCase.InputParams["url"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'url' parameter")
+		}
+		return tr.Client.Tickets.GetByURL(ctx, url)
+
+	case "Search":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		page := int64(1)
+		perPage := int64(20)
+		if p, ok := testCase.InputParams["page"].(float64); ok {
+			page = int64(p)
+		}
+		if pp, ok := testCase.InputParams["per_page"].(float64); ok {
+			perPage = int64(pp)
+		}
+		return tr.Client.Tickets.Search(ctx, query, "", "", int(page), int(perPage))
+
+	case "SearchBySubject":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Tickets.SearchBySubject(ctx, query)
+
+	default:
+		return nil, fmt.Errorf("ticket operation %s not implemented", testCase.Operation)
+	}
+}
+
+// callUserMethod invokes a method on the Users service
+func (tr *TestRunner) callUserMethod(ctx context.Context, testCase TestCase) (interface{}, error) {
+	switch testCase.Operation {
+	case "Get":
+		id, ok := testCase.InputParams["id"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'id' parameter")
+		}
+		return tr.Client.Users.Get(ctx, id)
+
+	case "Search":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Users.Search(ctx, query)
+
+	case "SearchByUsernameExact":
+		username, ok := testCase.InputParams["username"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'username' parameter")
+		}
+		return tr.Client.Users.SearchByUsernameExact(ctx, username)
+
+	case "SearchByUsernamePartial":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Users.SearchByUsernamePartial(ctx, query)
+
+	case "SearchByEmailExact":
+		email, ok := testCase.InputParams["email"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'email' parameter")
+		}
+		return tr.Client.Users.SearchByEmailExact(ctx, email)
+
+	case "SearchByEmailPartial":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Users.SearchByEmailPartial(ctx, query)
+
+	case "SearchByNameExact":
+		name, ok := testCase.InputParams["name"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'name' parameter")
+		}
+		return tr.Client.Users.SearchByNameExact(ctx, name)
+
+	case "SearchByNamePartial":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Users.SearchByNamePartial(ctx, query)
+
+	default:
+		return nil, fmt.Errorf("user operation %s not implemented", testCase.Operation)
+	}
+}
+
+// callAssetMethod invokes a method on the Assets service
+func (tr *TestRunner) callAssetMethod(ctx context.Context, testCase TestCase) (interface{}, error) {
+	switch testCase.Operation {
+	case "Get":
+		id, ok := testCase.InputParams["id"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'id' parameter")
+		}
+		return tr.Client.Assets.Get(ctx, id)
+
+	case "Search":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Assets.Search(ctx, query)
+
+	case "SearchByNameExact":
+		name, ok := testCase.InputParams["name"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'name' parameter")
+		}
+		return tr.Client.Assets.SearchByNameExact(ctx, name)
+
+	case "SearchByNamePartial":
+		query, ok := testCase.InputParams["query"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'query' parameter")
+		}
+		return tr.Client.Assets.SearchByNamePartial(ctx, query)
+
+	case "SearchByCustomFieldExact":
+		fieldName, ok := testCase.InputParams["fieldName"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'fieldName' parameter")
+		}
+		value, ok := testCase.InputParams["value"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'value' parameter")
+		}
+		return tr.Client.Assets.SearchByCustomFieldExact(ctx, fieldName, value)
+
+	case "SearchByCustomFieldPartial":
+		fieldName, ok := testCase.InputParams["fieldName"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'fieldName' parameter")
+		}
+		value, ok := testCase.InputParams["value"].(string)
+		if !ok {
+			return nil, fmt.Errorf("missing or invalid 'value' parameter")
+		}
+		return tr.Client.Assets.SearchByCustomFieldPartial(ctx, fieldName, value)
+
+	default:
+		return nil, fmt.Errorf("asset operation %s not implemented", testCase.Operation)
+	}
 }
 
 // classifyError determines the error type and returns appropriate classification

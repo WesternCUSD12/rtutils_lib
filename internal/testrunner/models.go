@@ -7,6 +7,7 @@ type TestCase struct {
 	ID            string                 `json:"id"`
 	MethodName    string                 `json:"method"`
 	ServiceType   string                 `json:"service"`
+	Operation     string                 `json:"operation"`
 	Description   string                 `json:"description"`
 	InputParams   map[string]interface{} `json:"inputs"`
 	ExpectedType  string                 `json:"expected_result_type"`
