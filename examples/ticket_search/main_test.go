@@ -1,4 +1,3 @@
-package ticketsearch
 package main
 
 import "testing"
@@ -23,41 +22,37 @@ func TestNormalizePagination_MaxPerPage(t *testing.T) {
 	}
 }
 
+func TestBuildTicketSQL_RequiresFilter(t *testing.T) {
+	_, err := buildTicketSQL(searchFilters{})
+	if err == nil {
+		t.Fatalf("expected error when no filters are provided")
+	}
+}
 
+func TestBuildTicketSQL_BuildsAndMatches(t *testing.T) {
+	filters := searchFilters{
+		Queue:   "Helpdesk",
+		Status:  "open",
+		Subject: "printer",
+	}
+	query, err := buildTicketSQL(filters)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	expected := "Queue = 'Helpdesk' AND Status = 'open' AND Subject LIKE '%printer%'"
+	if query != expected {
+		t.Fatalf("expected %q, got %q", expected, query)
+	}
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}	}		t.Fatalf("expected %q, got %q", expected, query)	if query != expected {	expected := "Subject LIKE '%printer\\'s%'"	}		t.Fatalf("expected no error, got %v", err)	if err != nil {	query, err := buildTicketSQL(filters)	filters := searchFilters{Subject: "printer's"}func TestBuildTicketSQL_EscapesSingleQuotes(t *testing.T) {}	}		t.Fatalf("expected %q, got %q", expected, query)	if query != expected {	expected := "Queue = 'Helpdesk' AND Status = 'open' AND Subject LIKE '%printer%'"	}		t.Fatalf("expected no error, got %v", err)	if err != nil {	query, err := buildTicketSQL(filters)	}		Subject: "printer",		Status:  "open",		Queue:   "Helpdesk",	filters := searchFilters{func TestBuildTicketSQL_BuildsAndMatches(t *testing.T) {}	}		t.Fatalf("expected error when no filters are provided")	if err == nil {	_, err := buildTicketSQL(searchFilters{})func TestBuildTicketSQL_RequiresFilter(t *testing.T) {
+func TestBuildTicketSQL_EscapesSingleQuotes(t *testing.T) {
+	filters := searchFilters{Subject: "printer's"}
+	query, err := buildTicketSQL(filters)
+	if err != nil {
+		t.Fatalf("expected no error, got %v", err)
+	}
+	expected := "Subject LIKE '%printer\\'s%'"
+	if query != expected {
+		t.Fatalf("expected %q, got %q", expected, query)
+	}
+}

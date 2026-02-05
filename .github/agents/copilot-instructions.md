@@ -6,6 +6,7 @@ Auto-generated from all feature plans. Last updated: 2026-02-04
 - Go 1.25+ + `rtutils_lib` (internal), `os`, `fmt`, `log` (002-user-assets-example)
 - Go 1.25+ + `rtutils_lib` (internal), `os`, `flag`, `fmt`, `log`, `text/tabwriter` (002-user-assets-example)
 - Go 1.25+ + `rtutils_lib` (internal), standard library (`flag`, `fmt`, `os`, `text/tabwriter`, `bufio`, `strings`). (003-asset-lookup-cli)
+- Go 1.22+ + Standard library for runtime; `github.com/stretchr/testify` for tests only (001-ticket-search)
 
 - Go 1.22+ + None (Standard Library for HTTP/JSON). `github.com/stretchr/testify` for testing. (001-rt-api-wrapper)
 
@@ -25,8 +26,8 @@ tests/
 Go 1.22+: Follow standard conventions
 
 ## Recent Changes
+- 001-ticket-search: Added Go 1.22+ + Standard library for runtime; `github.com/stretchr/testify` for tests only
 - 003-asset-lookup-cli: Added Go 1.25+ + `rtutils_lib` (internal), standard library (`flag`, `fmt`, `os`, `text/tabwriter`, `bufio`, `strings`).
-- 002-user-assets-example: Added Go 1.25+ + `rtutils_lib` (internal), `os`, `flag`, `fmt`, `log`, `text/tabwriter`
 - 002-user-assets-example: Added Go 1.25+ + `rtutils_lib` (internal), `os`, `flag`, `fmt`, `log`, `text/tabwriter`
 
 

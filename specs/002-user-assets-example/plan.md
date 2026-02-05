@@ -23,13 +23,13 @@ Create a standalone CLI example program in `examples/user_assets/main.go` that a
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
-*   **Idiomatic Go**: [PASS] Use `flag` package for CLI arguments.
-*   **Interface-First**: [N/A] Consumer code.
-*   **Test-First**: [PASS] Acceptance scenarios defined.
-*   **Type Safety**: [PASS] Go strong typing.
-*   **Error Transparency**: [PASS] Errors logged to stderr.
+- **Idiomatic Go**: [PASS] Use `flag` package for CLI arguments.
+- **Interface-First**: [N/A] Consumer code.
+- **Test-First**: [PASS] Acceptance scenarios defined.
+- **Type Safety**: [PASS] Go strong typing.
+- **Error Transparency**: [PASS] Errors logged to stderr.
 
 ## Project Structure
 
@@ -60,7 +60,7 @@ examples/
 
 N/A
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
+| -------------------------- | ------------------ | ------------------------------------ |
+| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |

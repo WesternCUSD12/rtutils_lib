@@ -10,6 +10,7 @@
 ### ## Clarifications
 
 ### Session 2026-02-05
+
 - Q: How to handle multiple matches? → A: Print summary table and exit (no interactive selection).
 - Q: Output format for single asset details? → A: Vertical Key-Value list.
 - Q: Auth loading method? → A: Environment variables (dot files supported).
@@ -70,20 +71,20 @@ A developer can find an asset by its "Internal Name" (e.g., "Fluffy Rooster"), w
 
 - **FR-001**: The tool MUST accept configuration via environment variables `RT_BASE_URL` and `RT_TOKEN`. It SHOULD support loading these from a `.env` file if present (using `godotenv` or similar).
 - **FR-002**: The tool MUST support the following mutually exclusive CLI flags:
-    - `--id`: Search by numeric Asset ID.
-    - `--name`: Search by the core `Name` field.
-    - `--internal-name`: Search by the custom field named "Internal Name".
+  - `--id`: Search by numeric Asset ID.
+  - `--name`: Search by the core `Name` field.
+  - `--internal-name`: Search by the custom field named "Internal Name".
 - **FR-003**: When searching by `--id`, the system MUST use the direct API `GET` method.
 - **FR-004**: When searching by `--name` or `--internal-name`, the system MUST use the `Search` (AssetSQL) method.
-    - For `--internal-name`, the query format MUST be `'CF.{Internal Name}' = 'VALUE'`.
+  - For `--internal-name`, the query format MUST be `'CF.{Internal Name}' = 'VALUE'`.
 - **FR-005**: The tool MUST display a formatted list of asset properties in a vertical Key-Value format (e.g., using `tabwriter` with aligned columns or simple `fmt.Printf`).
-    - ID
-    - Name
-    - Status
-    - Type (Custom Field)
-    - Model (Custom Field)
-    - Manufacturer (Custom Field)
-    - All other non-empty Custom Fields available on the asset.
+  - ID
+  - Name
+  - Status
+  - Type (Custom Field)
+  - Model (Custom Field)
+  - Manufacturer (Custom Field)
+  - All other non-empty Custom Fields available on the asset.
 - **FR-006**: If no assets are found, the tool MUST print a user-friendly "No results found" message to `stderr` and exit with a non-zero code.
 - **FR-007**: If exactly one asset is found, output its full details.
 - **FR-008**: If multiple assets are found (via name search), list a summary table (ID, Name, URL) to stdout and exit with a non-zero exit code to indicate the specific target was ambiguous.

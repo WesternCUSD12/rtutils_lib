@@ -2,6 +2,7 @@ package rtutils_lib
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"net/url"
 )
@@ -180,4 +181,140 @@ type Ticket struct {
 	CustomFields map[string]interface{} `json:"CustomFields,omitempty"`
 	Created      string                 `json:"Created,omitempty"`
 	Resolved     string                 `json:"Resolved,omitempty"`
+}
+
+// UnmarshalJSON handles custom unmarshaling for Ticket to support RT's format
+// where Requestor, Cc, and AdminCc can be arrays of strings or objects,
+// Queue and Owner can be strings or objects, ID can be a number or string,
+// and CustomFields can be an array or object
+func (t *Ticket) UnmarshalJSON(data []byte) error {
+	type TicketAlias Ticket
+	aux := struct {
+		ID          interface{} `json:"id"`
+		Queue       interface{} `json:"Queue"`
+		Owner       interface{} `json:"Owner"`
+		Requestor   interface{} `json:"Requestor"`
+		Cc          interface{} `json:"Cc"`
+		AdminCc     interface{} `json:"AdminCc"`
+		CustomFields interface{} `json:"CustomFields"`
+		*TicketAlias
+	}{
+		TicketAlias: (*TicketAlias)(t),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Handle ID (can be number or string)
+	t.ID = parseIDField(aux.ID)
+	// Handle Queue
+	t.Queue = parseStringField(aux.Queue)
+	// Handle Owner
+	t.Owner = parseStringField(aux.Owner)
+	// Handle Requestor
+	t.Requestor = parseContactField(aux.Requestor)
+	// Handle Cc
+	t.Cc = parseContactField(aux.Cc)
+	// Handle AdminCc
+	t.AdminCc = parseContactField(aux.AdminCc)
+	// Handle CustomFields
+	t.CustomFields = parseCustomFields(aux.CustomFields)
+
+	return nil
+}
+
+// parseIDField handles ID which can be a number or string
+func parseIDField(field interface{}) string {
+	if field == nil {
+		return ""
+	}
+
+	switch v := field.(type) {
+	case string:
+		return v
+	case float64:
+		// JSON unmarshals numbers to float64
+		return fmt.Sprintf("%.0f", v)
+	case int:
+		return fmt.Sprintf("%d", v)
+	}
+
+	return ""
+}
+
+// parseStringField handles both strings and objects (extracting "id" field)
+func parseStringField(field interface{}) string {
+	if field == nil {
+		return ""
+	}
+
+	switch v := field.(type) {
+	case string:
+		return v
+	case map[string]interface{}:
+		// Extract ID from object like {"id": "queue", "_url": "...", "type": "queue"}
+		if id, ok := v["id"].(string); ok {
+			return id
+		}
+	}
+
+	return ""
+}
+
+// parseContactField handles both string arrays and object arrays
+func parseContactField(field interface{}) []string {
+	if field == nil {
+		return nil
+	}
+
+	result := []string{}
+
+	switch v := field.(type) {
+	case []interface{}:
+		for _, item := range v {
+			switch itemVal := item.(type) {
+			case string:
+				result = append(result, itemVal)
+			case map[string]interface{}:
+				// Extract ID from object like {"id": "user", "_url": "...", "type": "user"}
+				if id, ok := itemVal["id"].(string); ok {
+					result = append(result, id)
+				}
+			}
+		}
+	case []string:
+		result = v
+	}
+
+	return result
+}
+
+// parseCustomFields handles CustomFields which can be an array (when empty) or object
+func parseCustomFields(field interface{}) map[string]interface{} {
+	if field == nil {
+		return nil
+	}
+
+	switch v := field.(type) {
+	case map[string]interface{}:
+		return v
+	case []interface{}:
+		// If it's an empty array, return nil
+		if len(v) == 0 {
+			return nil
+		}
+		// If it's an array with objects, try to convert to map
+		result := make(map[string]interface{})
+		for _, item := range v {
+			if cfObj, ok := item.(map[string]interface{}); ok {
+				if name, ok := cfObj["name"].(string); ok {
+					result[name] = cfObj
+				}
+			}
+		}
+		return result
+	}
+
+	return nil
 }
