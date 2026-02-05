@@ -98,54 +98,54 @@ Test the ability to run all methods against a live RT instance.
 
 #### Validators Implementation (Blocking for all tests)
 
-- [ ] T015 [P] [US1] Implement `internal/validators/ticket_validator.go`
+- [X] T015 [P] [US1] Implement `internal/validators/ticket_validator.go`
   - TicketValidator struct
   - Validate() method: check id + status + other field
   - RequiredFields() method
   - See contracts/validators.md for specifications
 
-- [ ] T016 [P] [US1] Implement `internal/validators/ticket_validator_test.go`
+- [X] T016 [P] [US1] Implement `internal/validators/ticket_validator_test.go`
   - Test valid ticket passes
   - Test missing id fails
   - Test missing status fails
   - Test missing additional field fails
   - Test empty strings treated as missing
 
-- [ ] T017 [P] [US1] Implement `internal/validators/user_validator.go`
+- [X] T017 [P] [US1] Implement `internal/validators/user_validator.go`
   - UserValidator struct
   - Validate() method: check id + name
   - RequiredFields() method
 
-- [ ] T018 [P] [US1] Implement `internal/validators/user_validator_test.go`
+- [X] T018 [P] [US1] Implement `internal/validators/user_validator_test.go`
   - Test valid user passes
   - Test missing id fails
   - Test missing name fails
 
-- [ ] T019 [P] [US1] Implement `internal/validators/asset_validator.go`
+- [X] T019 [P] [US1] Implement `internal/validators/asset_validator.go`
   - AssetValidator struct
   - Validate() method: check id + name
   - RequiredFields() method
 
-- [ ] T020 [P] [US1] Implement `internal/validators/asset_validator_test.go`
+- [X] T020 [P] [US1] Implement `internal/validators/asset_validator_test.go`
   - Test valid asset passes
   - Test missing id fails
   - Test missing name fails
 
-- [ ] T021 [P] [US1] Implement `internal/validators/generic_validator.go`
+- [X] T021 [P] [US1] Implement `internal/validators/generic_validator.go`
   - GenericValidator struct (fallback for unknown types)
   - Validate() method: check id + other field
   - RequiredFields() method
 
 #### Test Runner Implementation
 
-- [ ] T022 [US1] Implement `internal/testrunner/runner.go` with:
+- [X] T022 [US1] Implement `internal/testrunner/runner.go` with:
   - TestRunner struct (Client, Config, TestCases)
   - Run() method for sequential execution
   - executeTest() for single test execution
   - classifyError() for error classification logic
   - See plan.md execution flow diagram
 
-- [ ] T023 [P] [US1] Implement `internal/testrunner/runner_test.go`
+- [X] T023 [P] [US1] Implement `internal/testrunner/runner_test.go`
   - Mock Client for testing
   - Test sequential execution order
   - Test error classification (Infrastructure/Assertion/Method)
@@ -153,12 +153,12 @@ Test the ability to run all methods against a live RT instance.
 
 #### Test Case Loader
 
-- [ ] T024 [P] [US1] Implement `internal/testrunner/test_case_loader.go`
+- [X] T024 [P] [US1] Implement `internal/testrunner/test_case_loader.go`
   - LoadTestCases() from contracts/test-cases.json
   - Populate TestCase slice with all 18 read-only methods
   - Validation of loaded test cases
 
-- [ ] T025 [P] [US1] Implement `internal/testrunner/test_case_loader_test.go`
+- [X] T025 [P] [US1] Implement `internal/testrunner/test_case_loader_test.go`
   - Test loading JSON
   - Test correct number of test cases (18)
   - Test test case fields populated correctly
