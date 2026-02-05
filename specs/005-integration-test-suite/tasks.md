@@ -7,9 +7,11 @@
 
 This document breaks the implementation plan into executable tasks organized by user story and phase. Each task is independent-testable and can be assigned to developers.
 
-**Total Tasks**: 38  
+**Total Tasks**: 56 (50 active, 4 skipped CI/CD)  
+**Completed**: 38/50 (76%)  
+**In Progress**: Phase 6 US5 (T042-T046)  
 **Estimated Duration**: 3-4 weeks for experienced Go developer  
-**MVP MVP Scope (US1 + US2)**: ~2 weeks
+**MVP Scope (US1 + US2 + US3 + US5)**: ~3 weeks
 
 ---
 
@@ -241,27 +243,27 @@ Generate machine-readable JSON reports.
 
 ## Phase 5: User Story 4 - Integrate Tests into CI/CD Pipeline
 
-Enable automated CI/CD integration.
+Enable automated CI/CD integration. **Status: SKIPPED**
 
-- [ ] T038 [P] [US4] Update `cmd/rtutils-test-suite/main.go`:
+- [SKIP] T038 [P] [US4] Update `cmd/rtutils-test-suite/main.go`:
   - Implement proper exit codes (0 for all pass, 1 for failures)
   - Env var support for CI/CD (RT_URL, RT_USERNAME, RT_PASSWORD)
   - Log output to both stdout and file
   - Handle missing env vars gracefully
 
-- [ ] T039 [P] [US4] Create GitHub Actions workflow example:
+- [SKIP] T039 [P] [US4] Create GitHub Actions workflow example:
   - File: `.github/workflows/integration-tests.yml`
   - Test on push and pull_request
   - Checkout, build, run tests
   - Store report as artifact
   - Comment on PR with results
 
-- [ ] T040 [P] [US4] Create GitLab CI pipeline example:
+- [SKIP] T040 [P] [US4] Create GitLab CI pipeline example:
   - File: `.gitlab-ci.yml` stage for integration tests
   - Run tests, save report
   - Set up CI/CD secrets
 
-- [ ] T041 [US4] Commit US4: "feat: US4 - CI/CD pipeline integration"
+- [SKIP] T041 [US4] Commit US4: "feat: US4 - CI/CD pipeline integration"
 
 ---
 
@@ -269,27 +271,27 @@ Enable automated CI/CD integration.
 
 Extensible test framework for custom queries.
 
-- [ ] T042 [P] [US5] Implement custom test case support:
+- [X] T042 [P] [US5] Implement custom test case support:
   - `internal/testrunner/custom_tests.go` with:
     - CustomTestCase struct extending TestCase
     - LoadCustomTests(configFile string) []CustomTestCase
     - RegisterValidator(name string, validator ResultValidator) function
 
-- [ ] T043 [P] [US5] Update runner.go to include custom tests:
+- [X] T043 [P] [US5] Update runner.go to include custom tests:
   - Initialize custom tests if provided via flag
   - Merge custom tests with standard tests
   - Execute custom tests in same sequential flow
 
-- [ ] T044 [P] [US5] Create custom test config example:
+- [X] T044 [P] [US5] Create custom test config example:
   - File: `examples/custom-tests.json`
   - Example: custom query for specific ticket state
   - Document custom test structure
 
-- [ ] T045 [P] [US5] Update `cmd/rtutils-test-suite/main.go`:
+- [X] T045 [P] [US5] Update `cmd/rtutils-test-suite/main.go`:
   - Add --custom-tests flag for custom test file
   - Load and integrate custom tests
 
-- [ ] T046 [US5] Commit US5: "feat: US5 - custom test case support"
+- [X] T046 [US5] Commit US5: "feat: US5 - custom test case support"
 
 ---
 
