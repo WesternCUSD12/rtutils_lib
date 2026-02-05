@@ -178,7 +178,7 @@ Test the ability to run all methods against a live RT instance.
 
 #### CLI Entry Point (MVP)
 
-- [ ] T028 [US1] Implement `cmd/rtutils-test-suite/main.go` with:
+- [X] T028 [US1] Implement `cmd/rtutils-test-suite/main.go` with:
   - Parse command-line flags (--config, --report, --debug)
   - Read config (env vars or JSON)
   - Create RTConnection and load Client
@@ -186,7 +186,7 @@ Test the ability to run all methods against a live RT instance.
   - Call Run()
   - Return appropriate exit code (0 for pass, 1 for fail)
 
-- [ ] T029 [P] [US1] Implement `cmd/rtutils-test-suite/main_test.go`
+- [X] T029 [P] [US1] Implement `cmd/rtutils-test-suite/main_test.go`
   - Test flag parsing
   - Test config loading
   - Test exit code logic
