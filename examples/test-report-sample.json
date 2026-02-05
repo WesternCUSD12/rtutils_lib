@@ -1,0 +1,214 @@
+{
+  "rtInstance": "https://rt.example.com",
+  "execution": {
+    "timestamp": "2024-02-05T13:45:30Z",
+    "durationSeconds": 12.345,
+    "totalTests": 18,
+    "passedTests": 16,
+    "failedTests": 2,
+    "infrastructureErrors": 1,
+    "assertionFailures": 1,
+    "methodErrors": 0,
+    "summaryMessage": "16 passed, 2 failed"
+  },
+  "results": [
+    {
+      "testId": "TICKET-001",
+      "methodName": "Get",
+      "serviceName": "TicketService",
+      "validatorType": "TicketValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 150,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "TICKET-002",
+      "methodName": "Search",
+      "serviceName": "TicketService",
+      "validatorType": "TicketValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 280,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "TICKET-003",
+      "methodName": "SearchBySubject",
+      "serviceName": "TicketService",
+      "validatorType": "TicketValidator",
+      "status": "FAIL",
+      "errorType": "AssertionFailure",
+      "errorMessage": "Expected status 'resolved' but got 'open'",
+      "durationMs": 320,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "TICKET-004",
+      "methodName": "Update",
+      "serviceName": "TicketService",
+      "validatorType": "TicketValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 200,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "USER-001",
+      "methodName": "Get",
+      "serviceName": "UserService",
+      "validatorType": "UserValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 120,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "USER-002",
+      "methodName": "Search",
+      "serviceName": "UserService",
+      "validatorType": "UserValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 250,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "USER-003",
+      "methodName": "GetRoles",
+      "serviceName": "UserService",
+      "validatorType": "UserValidator",
+      "status": "FAIL",
+      "errorType": "InfrastructureError",
+      "errorMessage": "Failed to connect to RT instance",
+      "durationMs": 5000,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "USER-004",
+      "methodName": "GetGroups",
+      "serviceName": "UserService",
+      "validatorType": "UserValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 180,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "ASSET-001",
+      "methodName": "Get",
+      "serviceName": "AssetService",
+      "validatorType": "AssetValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 130,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "ASSET-002",
+      "methodName": "Search",
+      "serviceName": "AssetService",
+      "validatorType": "AssetValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 290,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "ASSET-003",
+      "methodName": "SearchByName",
+      "serviceName": "AssetService",
+      "validatorType": "AssetValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 310,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "ASSET-004",
+      "methodName": "Create",
+      "serviceName": "AssetService",
+      "validatorType": "AssetValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 450,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "ASSET-005",
+      "methodName": "Update",
+      "serviceName": "AssetService",
+      "validatorType": "AssetValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 380,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "ASSET-006",
+      "methodName": "Delete",
+      "serviceName": "AssetService",
+      "validatorType": "AssetValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 220,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "GEN-001",
+      "methodName": "GetVersion",
+      "serviceName": "Generic",
+      "validatorType": "GenericValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 95,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "GEN-002",
+      "methodName": "Ping",
+      "serviceName": "Generic",
+      "validatorType": "GenericValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 45,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "GEN-003",
+      "methodName": "Health",
+      "serviceName": "Generic",
+      "validatorType": "GenericValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 75,
+      "startTime": "2024-02-05T13:45:30Z"
+    },
+    {
+      "testId": "GEN-004",
+      "methodName": "Status",
+      "serviceName": "Generic",
+      "validatorType": "GenericValidator",
+      "status": "PASS",
+      "errorType": "",
+      "errorMessage": "",
+      "durationMs": 85,
+      "startTime": "2024-02-05T13:45:30Z"
+    }
+  ]
+}

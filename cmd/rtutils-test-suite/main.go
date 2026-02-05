@@ -92,11 +92,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Print summary to console
-	fmt.Println("\n" + report.Execution.SummaryMessage)
+	// Format and output results
+	formatter := testrunner.NewReportFormatter(report)
+
+	// Print human-readable report to console
+	fmt.Println()
+	fmt.Println(formatter.FormatText())
 
 	// Write JSON report to file
-	if err := writeReportToFile(*reportFlag, runner); err != nil {
+	if err := writeReportToFile(*reportFlag, formatter); err != nil {
 		fmt.Fprintf(os.Stderr, "Warning: failed to write report file: %v\n", err)
 	} else if *debugFlag {
 		fmt.Printf("DEBUG: Report written to: %s\n", *reportFlag)
@@ -110,12 +114,12 @@ func main() {
 }
 
 // writeReportToFile writes the test report to a JSON file
-func writeReportToFile(filePath string, runner *testrunner.TestRunner) error {
+func writeReportToFile(filePath string, formatter *testrunner.ReportFormatter) error {
 	file, err := os.Create(filePath)
 	if err != nil {
 		return fmt.Errorf("failed to create report file: %w", err)
 	}
 	defer file.Close()
 
-	return runner.WriteReport(file)
+	return formatter.WriteJSON(file, true)
 }
