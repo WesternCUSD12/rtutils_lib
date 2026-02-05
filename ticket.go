@@ -32,13 +32,29 @@ func (s *TicketService) Get(ctx context.Context, id string) (*Ticket, error) {
 	return &ticket, nil
 }
 
+// GetByURL fetches a ticket using a full RT URL (e.g. from _url in search results).
+func (s *TicketService) GetByURL(ctx context.Context, url string) (*Ticket, error) {
+	var ticket Ticket
+	err := s.client.request(ctx, "GET", url, nil, &ticket)
+	if err != nil {
+		return nil, err
+	}
+	return &ticket, nil
+}
+
 // Search searches for tickets using TicketSQL.
-func (s *TicketService) Search(ctx context.Context, query string, page int) (*SearchResult[Ticket], error) {
+func (s *TicketService) Search(ctx context.Context, query string, page int, perPage int) (*SearchResult[Ticket], error) {
 	if page < 1 {
 		page = 1
 	}
+	if perPage < 1 {
+		perPage = 20
+	}
+	if perPage > 100 {
+		perPage = 100
+	}
 
-	path := fmt.Sprintf("/tickets?query=%s&page=%d", url.QueryEscape(query), page)
+	path := fmt.Sprintf("/tickets?query=%s&page=%d&per_page=%d", url.QueryEscape(query), page, perPage)
 
 	var result SearchResult[Ticket]
 	err := s.client.request(ctx, "GET", path, nil, &result)

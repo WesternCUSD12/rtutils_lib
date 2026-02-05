@@ -58,8 +58,9 @@ func TestTicketService_Search(t *testing.T) {
 		func(req *http.Request) (*http.Response, error) {
 			query := req.URL.Query().Get("query")
 			page := req.URL.Query().Get("page")
-			if query == "Queue = 'General'" && page == "1" {
-				return httpmock.NewStringResponse(200, `{"total": 5, "page": 1, "items": [{"id": "1", "Subject": "T1"}, {"id": "2", "Subject": "T2"}]}`), nil
+			perPage := req.URL.Query().Get("per_page")
+			if query == "Queue = 'General'" && page == "1" && perPage == "20" {
+				return httpmock.NewStringResponse(200, `{"total": 5, "page": 1, "per_page": 20, "items": [{"id": "1", "Subject": "T1"}, {"id": "2", "Subject": "T2"}]}`), nil
 			}
 			return httpmock.NewStringResponse(400, "Bad Request"), nil
 		})
@@ -67,11 +68,28 @@ func TestTicketService_Search(t *testing.T) {
 	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
 	httpmock.ActivateNonDefault(client.client)
 
-	result, err := client.Tickets.Search(context.Background(), "Queue = 'General'", 1)
+	result, err := client.Tickets.Search(context.Background(), "Queue = 'General'", 1, 20)
 	assert.NoError(t, err)
 	assert.Equal(t, 5, result.Total)
 	assert.Equal(t, 2, len(result.Items))
 	assert.Equal(t, "T1", result.Items[0].Subject)
+}
+
+func TestTicketService_GetByURL(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	ticketURL := "http://rt.example.com/REST/2.0/ticket/456"
+	httpmock.RegisterResponder("GET", ticketURL,
+		httpmock.NewStringResponder(200, `{"id": "456", "Subject": "From URL", "type": "ticket"}`))
+
+	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
+	httpmock.ActivateNonDefault(client.client)
+
+	ticket, err := client.Tickets.GetByURL(context.Background(), ticketURL)
+	assert.NoError(t, err)
+	assert.Equal(t, "456", ticket.ID)
+	assert.Equal(t, "From URL", ticket.Subject)
 }
 
 func TestTicketService_Update(t *testing.T) {
