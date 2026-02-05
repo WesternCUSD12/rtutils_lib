@@ -1,0 +1,99 @@
+[
+  {
+    "id": "CUSTOM-TICKETS-001",
+    "method": "SearchByCustomQueue",
+    "service": "TicketService",
+    "description": "Search for tickets in the 'Engineering' queue",
+    "enabled": true,
+    "validator_type": "TicketValidator",
+    "timeout": 5,
+    "assertions": [
+      "Returned tickets belong to Engineering queue",
+      "Result count is greater than 0"
+    ],
+    "tags": ["custom", "tickets", "queue"],
+    "customFields": {
+      "queue": "Engineering",
+      "status": "open"
+    }
+  },
+  {
+    "id": "CUSTOM-TICKETS-002",
+    "method": "SearchByPriority",
+    "service": "TicketService",
+    "description": "Search for high-priority tickets created today",
+    "enabled": true,
+    "validator_type": "TicketValidator",
+    "timeout": 5,
+    "assertions": [
+      "All returned tickets have priority >= 3",
+      "Tickets were created today",
+      "Result includes ticket IDs"
+    ],
+    "tags": ["custom", "tickets", "priority"],
+    "preconditions": [
+      "At least one high-priority ticket exists",
+      "Ticket creation records are current"
+    ],
+    "customFields": {
+      "priority": "gte:3",
+      "created": "today"
+    }
+  },
+  {
+    "id": "CUSTOM-USERS-001",
+    "method": "SearchByDepartment",
+    "service": "UserService",
+    "description": "Find all users in the Support department",
+    "enabled": true,
+    "validator_type": "UserValidator",
+    "timeout": 3,
+    "assertions": [
+      "User objects contain department field",
+      "All returned users have Department='Support'",
+      "User IDs and names are populated"
+    ],
+    "tags": ["custom", "users", "department"],
+    "customFields": {
+      "department": "Support"
+    }
+  },
+  {
+    "id": "CUSTOM-ASSETS-001",
+    "method": "SearchByCategory",
+    "service": "AssetService",
+    "description": "Find all hardware assets in the Inventory",
+    "enabled": true,
+    "validator_type": "AssetValidator",
+    "timeout": 4,
+    "assertions": [
+      "Assets have category/type information",
+      "Asset inventory count matches expected",
+      "Each asset has unique ID and name"
+    ],
+    "tags": ["custom", "assets", "inventory"],
+    "customFields": {
+      "category": "Hardware",
+      "status": "Active"
+    }
+  },
+  {
+    "id": "CUSTOM-TICKETS-003",
+    "method": "SearchUnresolvedStale",
+    "service": "TicketService",
+    "description": "Find unresolved tickets that haven't been updated in 30+ days",
+    "enabled": false,
+    "validator_type": "TicketValidator",
+    "timeout": 10,
+    "assertions": [
+      "Tickets are in unresolved state",
+      "Last-Update timestamp is 30+ days old",
+      "Results are sorted by age descending"
+    ],
+    "tags": ["custom", "tickets", "stale"],
+    "customFields": {
+      "status": "!= 'resolved'",
+      "age_days": "gte:30"
+    }
+  }
+]

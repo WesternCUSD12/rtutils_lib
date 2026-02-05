@@ -15,6 +15,7 @@ func main() {
 	reportFlag := flag.String("report", "test-report.json", "Path to output JSON report")
 	debugFlag := flag.Bool("debug", false, "Enable debug logging")
 	testCasesFlag := flag.String("test-cases", "specs/005-integration-test-suite/contracts/test-cases.json", "Path to test cases JSON file")
+	customTestsFlag := flag.String("custom-tests", "", "Path to custom test cases JSON file (optional)")
 	filterServiceFlag := flag.String("service", "", "Filter tests by service (e.g., TicketService)")
 	filterValidatorFlag := flag.String("validator", "", "Filter tests by validator (e.g., TicketValidator)")
 
@@ -62,6 +63,40 @@ func main() {
 
 	if *debugFlag {
 		fmt.Printf("DEBUG: Loaded %d test cases\n", len(testCases))
+	}
+
+	// Load and merge custom tests if provided
+	if *customTestsFlag != "" {
+		customTestsPath := *customTestsFlag
+		if !filepath.IsAbs(customTestsPath) {
+			cwd, err := os.Getwd()
+			if err == nil {
+				customTestsPath = filepath.Join(cwd, customTestsPath)
+			}
+		}
+
+		if *debugFlag {
+			fmt.Printf("DEBUG: Loading custom test cases from: %s\n", customTestsPath)
+		}
+
+		customTestCases, err := testrunner.LoadCustomTests(customTestsPath)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: failed to load custom test cases: %v\n", err)
+		} else {
+			// Enable only enabled custom tests
+			enabledCustom := testrunner.GetEnabledCustomTests(customTestCases)
+			
+			if *debugFlag {
+				fmt.Printf("DEBUG: Loaded %d custom test cases (%d enabled)\n", len(customTestCases), len(enabledCustom))
+			}
+
+			// Merge custom tests with standard tests (custom tests take priority by ID)
+			testCases = testrunner.MergeTestCases(testCases, enabledCustom)
+			
+			if *debugFlag {
+				fmt.Printf("DEBUG: Merged to %d total test cases\n", len(testCases))
+			}
+		}
 	}
 
 	// Apply filters if specified
