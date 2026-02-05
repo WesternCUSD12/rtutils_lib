@@ -1,6 +1,9 @@
 package rtutils_lib
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 // APIError represents an error returned by the Request Tracker API.
 type APIError struct {
@@ -44,4 +47,62 @@ type Transaction struct {
 	Creator     string   `json:"Creator,omitempty"`
 	Created     string   `json:"Created,omitempty"`
 	Attachments []string `json:"Attachments,omitempty"`
+}
+
+// UnmarshalJSON handles custom unmarshaling for Transaction to support case-insensitive fields
+func (t *Transaction) UnmarshalJSON(data []byte) error {
+	type TransactionAlias Transaction
+	aux := struct {
+		ID       interface{} `json:"id"`
+		Creator  interface{} `json:"Creator"`
+		OldValue interface{} `json:"OldValue"`
+		NewValue interface{} `json:"NewValue"`
+		*TransactionAlias
+	}{
+		TransactionAlias: (*TransactionAlias)(t),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Handle ID (can be number or string)
+	switch v := aux.ID.(type) {
+	case string:
+		t.ID = v
+	case float64:
+		t.ID = fmt.Sprintf("%.0f", v)
+	case int:
+		t.ID = fmt.Sprintf("%d", v)
+	}
+
+	// Handle Creator (can be string or object)
+	t.Creator = parseStringOrObject(aux.Creator)
+
+	// Handle OldValue (can be string or object)
+	t.OldValue = parseStringOrObject(aux.OldValue)
+
+	// Handle NewValue (can be string or object)
+	t.NewValue = parseStringOrObject(aux.NewValue)
+
+	return nil
+}
+
+// parseStringOrObject extracts a string value from either a string or an object with "id" field
+func parseStringOrObject(field interface{}) string {
+	if field == nil {
+		return ""
+	}
+
+	switch v := field.(type) {
+	case string:
+		return v
+	case map[string]interface{}:
+		// Extract ID from object like {"id": "value", "_url": "...", "type": "..."}
+		if id, ok := v["id"].(string); ok {
+			return id
+		}
+	}
+
+	return ""
 }

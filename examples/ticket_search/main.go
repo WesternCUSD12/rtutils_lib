@@ -149,6 +149,46 @@ func findTicketByID(results *rtutils_lib.SearchResult[rtutils_lib.Ticket], id st
 	return nil, false
 }
 
+func printTicketComments(client *rtutils_lib.Client, ctx context.Context, transactions []rtutils_lib.Transaction) {
+	if len(transactions) == 0 {
+		fmt.Fprintf(os.Stdout, "\nNo transaction history found.\n")
+		return
+	}
+
+	fmt.Fprintf(os.Stdout, "\nTransaction History:\n")
+	fmt.Fprintf(os.Stdout, "%s\n", strings.Repeat("=", 80))
+	
+	// Fetch full details for each transaction that's a comment or correspondence
+	var comments []rtutils_lib.Transaction
+	for _, tx := range transactions {
+		// Fetch the full transaction details
+		fullTx, err := client.Tickets.GetTransaction(ctx, tx.ID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: could not fetch transaction %s: %v\n", tx.ID, err)
+			continue
+		}
+		
+		// Include transactions with content (comments/correspondence)
+		if fullTx.Content != "" {
+			comments = append(comments, *fullTx)
+		}
+	}
+
+	if len(comments) == 0 {
+		fmt.Fprintf(os.Stdout, "\nNo comments found in transaction history.\n")
+		return
+	}
+
+	fmt.Fprintf(os.Stdout, "\nComments (%d):\n", len(comments))
+	for i, tx := range comments {
+		fmt.Fprintf(os.Stdout, "\n[%d] %s by %s at %s\n", i+1, tx.Type, tx.Creator, tx.Created)
+		fmt.Fprintf(os.Stdout, "%s\n", strings.Repeat("-", 80))
+		fmt.Fprintf(os.Stdout, "%s\n", tx.Content)
+	}
+	
+	fmt.Fprintf(os.Stdout, "\n%s\n", strings.Repeat("=", 80))
+}
+
 func main() {
 	loadEnv()
 
@@ -246,5 +286,13 @@ func main() {
 
 		fmt.Fprintln(os.Stdout, "\nTicket Details:")
 		printTicketDetails(full)
+
+		// Fetch and display comments
+		history, err := client.Tickets.GetHistory(ctx, full.ID)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: could not fetch ticket history: %v\n", err)
+		} else if len(history) > 0 {
+			printTicketComments(client, ctx, history)
+		}
 	}
 }

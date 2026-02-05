@@ -93,6 +93,17 @@ func (s *TicketService) GetHistory(ctx context.Context, id string) ([]Transactio
 	return result.Items, nil
 }
 
+// GetTransaction fetches a single transaction by ID with full details.
+func (s *TicketService) GetTransaction(ctx context.Context, id string) (*Transaction, error) {
+	path := "/transaction/" + id
+	var transaction Transaction
+	err := s.client.request(ctx, "GET", path, nil, &transaction)
+	if err != nil {
+		return nil, err
+	}
+	return &transaction, nil
+}
+
 // Comment adds a comment to a ticket.
 func (s *TicketService) Comment(ctx context.Context, id string, text string) error {
 	path := "/ticket/" + id + "/comment"
@@ -190,12 +201,12 @@ type Ticket struct {
 func (t *Ticket) UnmarshalJSON(data []byte) error {
 	type TicketAlias Ticket
 	aux := struct {
-		ID          interface{} `json:"id"`
-		Queue       interface{} `json:"Queue"`
-		Owner       interface{} `json:"Owner"`
-		Requestor   interface{} `json:"Requestor"`
-		Cc          interface{} `json:"Cc"`
-		AdminCc     interface{} `json:"AdminCc"`
+		ID           interface{} `json:"id"`
+		Queue        interface{} `json:"Queue"`
+		Owner        interface{} `json:"Owner"`
+		Requestor    interface{} `json:"Requestor"`
+		Cc           interface{} `json:"Cc"`
+		AdminCc      interface{} `json:"AdminCc"`
 		CustomFields interface{} `json:"CustomFields"`
 		*TicketAlias
 	}{
