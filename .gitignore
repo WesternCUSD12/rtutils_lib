@@ -18,6 +18,13 @@ vendor/
 *.out
 cover.out
 coverage.txt
+
+# Environment variables
+.env
+.envrc
+
+# OS
+.DS_Store
 *.log
 
 # IDE
