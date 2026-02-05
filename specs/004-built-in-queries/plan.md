@@ -23,7 +23,7 @@ Add built-in query methods for assets, tickets, and users with explicit exact/pa
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 - **I. Idiomatic Go**: PASS - Methods are Go-style with `context.Context` and `(Result, error)` signatures.
 - **II. Interface-First Design**: PASS - Contracts in `contracts/` will be updated before implementation.

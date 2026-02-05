@@ -33,6 +33,7 @@ The client is organized into several services: `Assets`, `Tickets`, and `Users`.
 Handles all asset-related operations.
 
 #### Methods
+
 - `Create(ctx, asset)`: Creates a new asset. Returns the new asset's ID.
 - `Get(ctx, id)`: Fetches an asset by its ID.
 - `Search(ctx, query)`: Searches for assets using AssetSQL.
@@ -45,6 +46,7 @@ Handles all asset-related operations.
 - `Delete(ctx, id)`: Deletes an asset.
 
 #### Asset Struct
+
 ```go
 type Asset struct {
     ID           json.Number        `json:"id,omitempty"`
@@ -61,6 +63,7 @@ type Asset struct {
 Handles ticket management, history, and communication.
 
 #### Methods
+
 - `Create(ctx, ticket)`: Creates a new ticket. Returns the new ticket's ID.
 - `Get(ctx, id)`: Fetches a ticket by its ID.
 - `Search(ctx, query, page, perPage)`: Searches for tickets using TicketSQL.
@@ -72,6 +75,7 @@ Handles ticket management, history, and communication.
 - `Take(ctx, id)` / `Untake(ctx, id)` / `Steal(ctx, id)`: Manage ticket ownership.
 
 #### Ticket Struct
+
 ```go
 type Ticket struct {
     ID           string                 `json:"id,omitempty"`
@@ -90,6 +94,7 @@ type Ticket struct {
 Handles user discovery and management.
 
 #### Methods
+
 - `Get(ctx, id)`: Fetches a user by ID or username.
 - `Search(ctx, query)`: Searches for users.
 - `SearchByUsernameExact(ctx, username)`: Searches for users by exact username.
@@ -108,18 +113,19 @@ If you are an AI agent using this library, follow these patterns for maximum rel
 1.  **Client Initialization**: Always use `rtutils_lib.NewClient(url, token)`.
 2.  **Searching Assets**: `client.Assets.Search(ctx, "query")` is powerful as it searches across multiple fields (Name, Serial, Tag) and automatically fetches full details for each result.
 3.  **Custom Fields**:
-    *   For **Assets**: Use `asset.GetCustomField("Field Name")` and `asset.SetCustomField("Field Name", "Value")`.
-    *   For **Tickets**: Use the `CustomFields` map. Note that RT returns CFs as objects; if you only need the value, you may need to type-assert or inspect the map entry.
+    - For **Assets**: Use `asset.GetCustomField("Field Name")` and `asset.SetCustomField("Field Name", "Value")`.
+    - For **Tickets**: Use the `CustomFields` map. Note that RT returns CFs as objects; if you only need the value, you may need to type-assert or inspect the map entry.
 4.  **TicketSQL**: When searching tickets, use standard TicketSQL (e.g., `Queue = 'General' AND Status = 'open'`).
 5.  **Error Handling**: Check if `err` is non-nil. The library returns `*rtutils_lib.APIError` which includes the `StatusCode` and the raw `Message` from RT.
 
 ### Example: Finding an Asset and Creating a Ticket
+
 ```go
 // 1. Find asset by serial number
 results, _ := client.Assets.Search(ctx, "SN12345")
 if results.Count > 0 {
     asset := results.Items[0]
-    
+
     // 2. Create ticket linked to asset
     ticket := &rtutils_lib.Ticket{
         Subject: "Repair Request: " + asset.Name,
@@ -127,7 +133,7 @@ if results.Count > 0 {
         Status:  "new",
     }
     ticketID, _ := client.Tickets.Create(ctx, ticket)
-    
+
     // 3. Add initial comment
     client.Tickets.Comment(ctx, ticketID, "Found asset at " + asset.URL)
 }

@@ -44,6 +44,7 @@ func (s *AssetService) Search(ctx context.Context, query string) (*SearchResult[
 	if err != nil {
 		return nil, err
 	}
+	result.Finalize()
 
 	// RT Search results often only contain summary data (ID, URL).
 	// We need to fetch the full details for each asset using its _url.
@@ -144,6 +145,7 @@ func (s *AssetService) SearchWithCriteria(ctx context.Context, criteria []map[st
 	if err != nil {
 		return nil, err
 	}
+	result.Finalize()
 
 	// RT Search results often only contain summary data (ID, URL).
 	// We need to fetch the full details for each asset using its _url.
@@ -191,10 +193,35 @@ type Asset struct {
 	ID           json.Number        `json:"id,omitempty"`
 	URL          string             `json:"_url,omitempty"`
 	Name         string             `json:"Name,omitempty"`
-	Catalog      interface{}        `json:"Catalog,omitempty"`
+	Catalog      string             `json:"-"`
 	Content      string             `json:"Content,omitempty"`
 	Status       string             `json:"Status,omitempty"`
+	Owner        string             `json:"-"`
+	HeldBy       string             `json:"-"`
 	CustomFields []AssetCustomField `json:"CustomFields,omitempty"`
+}
+
+// UnmarshalJSON handles custom unmarshaling for Asset to support RT's format
+func (a *Asset) UnmarshalJSON(data []byte) error {
+	type AssetAlias Asset
+	aux := struct {
+		Catalog interface{} `json:"Catalog"`
+		Owner   interface{} `json:"Owner"`
+		HeldBy  interface{} `json:"HeldBy"`
+		*AssetAlias
+	}{
+		AssetAlias: (*AssetAlias)(a),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	a.Catalog = parseStringOrObject(aux.Catalog)
+	a.Owner = parseStringOrObject(aux.Owner)
+	a.HeldBy = parseStringOrObject(aux.HeldBy)
+
+	return nil
 }
 
 // GetCustomField returns the first value of a custom field by name, or an empty string if not found.

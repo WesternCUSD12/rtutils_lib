@@ -95,13 +95,9 @@ func buildTicketSQL(filters searchFilters) (string, error) {
 
 func printSearchResults(results *rtutils_lib.SearchResult[rtutils_lib.Ticket]) {
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
-	fmt.Fprintln(w, "ID\tSubject\tStatus\tQueue\tOwner\tRequestor\tURL")
+	fmt.Fprintln(w, "ID\tSubject\tStatus\tQueue\tOwner\tURL")
 	for _, ticket := range results.Items {
-		requestor := ""
-		if len(ticket.Requestor) > 0 {
-			requestor = ticket.Requestor[0]
-		}
-		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\t%s\n", ticket.ID, ticket.Subject, ticket.Status, ticket.Queue, ticket.Owner, requestor, ticket.URL)
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", ticket.ID, ticket.Subject, ticket.Status, ticket.Queue, ticket.Owner, ticket.URL)
 	}
 	w.Flush()
 }
@@ -157,18 +153,14 @@ func printTicketComments(client *rtutils_lib.Client, ctx context.Context, transa
 
 	fmt.Fprintf(os.Stdout, "\nTransaction History:\n")
 	fmt.Fprintf(os.Stdout, "%s\n", strings.Repeat("=", 80))
-	
-	// Fetch full details for each transaction that's a comment or correspondence
+
 	var comments []rtutils_lib.Transaction
 	for _, tx := range transactions {
-		// Fetch the full transaction details
 		fullTx, err := client.Tickets.GetTransaction(ctx, tx.ID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: could not fetch transaction %s: %v\n", tx.ID, err)
 			continue
 		}
-		
-		// Include transactions with content (comments/correspondence)
 		if fullTx.Content != "" {
 			comments = append(comments, *fullTx)
 		}
@@ -185,7 +177,7 @@ func printTicketComments(client *rtutils_lib.Client, ctx context.Context, transa
 		fmt.Fprintf(os.Stdout, "%s\n", strings.Repeat("-", 80))
 		fmt.Fprintf(os.Stdout, "%s\n", tx.Content)
 	}
-	
+
 	fmt.Fprintf(os.Stdout, "\n%s\n", strings.Repeat("=", 80))
 }
 
@@ -248,7 +240,7 @@ func main() {
 	client := rtutils_lib.NewClient(baseURL, token)
 	ctx := context.Background()
 
-	results, err := client.Tickets.Search(ctx, query, page, perPage)
+	results, err := client.Tickets.Search(ctx, query, "Created", "DESC", page, perPage)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "Error searching tickets:", err)
 		os.Exit(1)
@@ -287,7 +279,6 @@ func main() {
 		fmt.Fprintln(os.Stdout, "\nTicket Details:")
 		printTicketDetails(full)
 
-		// Fetch and display comments
 		history, err := client.Tickets.GetHistory(ctx, full.ID)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Warning: could not fetch ticket history: %v\n", err)

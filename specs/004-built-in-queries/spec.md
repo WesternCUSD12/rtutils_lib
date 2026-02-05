@@ -5,7 +5,7 @@
 **Status**: Draft  
 **Input**: User description: "Each data type (ticket, asset, user) should provide built in queries so a full custom query is not required every time. This should: allow for querying tickets subjects with like/contains (all tickets that contain the phrase Smartboard in their subject), allow for querying assets by Name, ID, or custom field (Internal Name for us), allow querying users by username, name or email. This will provide consistency in applications using the library with clear expectation of queries and returned data. Custom queries should be robustly supported with clear documentation on building an useful query"
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Asset Queries by Standard Fields (Priority: P1)
 
@@ -95,9 +95,9 @@ A developer encounters a use case not covered by the built-in query methods. The
 - When querying by a custom field that doesn't exist in the RT instance, the method MUST return a specific error indicating the custom field was not found, allowing applications to handle the invalid field name appropriately.
 - How are null or empty values in fields handled (e.g., asset with no Name set)?
 - What happens when network timeout occurs during a search operation?
-- How are special characters in search strings handled (e.g., searching for "laptop*" or "name with \" quote")?
+- How are special characters in search strings handled (e.g., searching for "laptop\*" or "name with \" quote")?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -128,7 +128,7 @@ A developer encounters a use case not covered by the built-in query methods. The
 - **User Query Methods**: Built-in convenience methods for user lookups by username, email, and name
 - **Query Documentation**: Comprehensive examples and patterns for building custom queries when built-in methods are insufficient
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
@@ -184,12 +184,15 @@ A developer encounters a use case not covered by the built-in query methods. The
 ## Risks
 
 - **Risk**: Custom field names vary widely across RT instances, making `SearchByCustomField` difficult to use consistently
+
   - **Mitigation**: Document the custom field name format requirements clearly; provide helper methods if needed
 
 - **Risk**: RT query syntax limitations may prevent some built-in methods from working as expected
+
   - **Mitigation**: Test against real RT instances during development; document any known limitations
 
 - **Risk**: Adding methods may bloat service interfaces
+
   - **Mitigation**: Keep methods focused on truly common use cases; avoid adding rarely-used convenience methods
 
 - **Risk**: Performance issues if built-in methods always fetch full details

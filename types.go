@@ -41,6 +41,22 @@ type SearchResult[T any] struct {
 	PerPage  int    `json:"per_page"`
 	NextPage string `json:"next_page"`
 	Items    []T    `json:"items"`
+	Assets   []T    `json:"assets"`  // Support RT variant
+	Tickets  []T    `json:"tickets"` // Support RT variant
+	Queues   []T    `json:"queues"`  // Support RT variant
+}
+
+// Finalize ensures all variants are merged into Items.
+func (r *SearchResult[T]) Finalize() {
+	if len(r.Items) == 0 {
+		if len(r.Assets) > 0 {
+			r.Items = r.Assets
+		} else if len(r.Tickets) > 0 {
+			r.Items = r.Tickets
+		} else if len(r.Queues) > 0 {
+			r.Items = r.Queues
+		}
+	}
 }
 
 // ActionResult represents the response from a create or update operation.

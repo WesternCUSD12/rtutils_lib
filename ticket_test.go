@@ -59,16 +59,17 @@ func TestTicketService_Search(t *testing.T) {
 			query := req.URL.Query().Get("query")
 			page := req.URL.Query().Get("page")
 			perPage := req.URL.Query().Get("per_page")
+			order := req.URL.Query().Get("order")
 			if query == "Queue = 'General'" && page == "1" && perPage == "20" {
 				return httpmock.NewStringResponse(200, `{"total": 5, "page": 1, "per_page": 20, "items": [{"id": "1", "Subject": "T1"}, {"id": "2", "Subject": "T2"}]}`), nil
 			}
-			return httpmock.NewStringResponse(400, "Bad Request"), nil
+			return httpmock.NewStringResponse(400, "Bad Request "+query+" "+order), nil
 		})
 
 	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
 	httpmock.ActivateNonDefault(client.client)
 
-	result, err := client.Tickets.Search(context.Background(), "Queue = 'General'", 1, 20)
+	result, err := client.Tickets.Search(context.Background(), "Queue = 'General'", "", "", 1, 20)
 	assert.NoError(t, err)
 	assert.Equal(t, 5, result.Total)
 	assert.Equal(t, 2, len(result.Items))

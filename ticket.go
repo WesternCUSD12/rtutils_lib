@@ -46,7 +46,7 @@ func (s *TicketService) GetByURL(ctx context.Context, url string) (*Ticket, erro
 }
 
 // Search searches for tickets using TicketSQL.
-func (s *TicketService) Search(ctx context.Context, query string, page int, perPage int) (*SearchResult[Ticket], error) {
+func (s *TicketService) Search(ctx context.Context, query string, orderby string, order string, page int, perPage int) (*SearchResult[Ticket], error) {
 	if page < 1 {
 		page = 1
 	}
@@ -57,15 +57,40 @@ func (s *TicketService) Search(ctx context.Context, query string, page int, perP
 		perPage = 100
 	}
 
-	path := fmt.Sprintf("/tickets?query=%s&page=%d&per_page=%d", url.QueryEscape(query), page, perPage)
+	params := url.Values{}
+	params.Add("query", query)
+	params.Add("page", fmt.Sprintf("%d", page))
+	params.Add("per_page", fmt.Sprintf("%d", perPage))
+	if orderby != "" {
+		params.Add("orderby", orderby)
+	}
+	if order != "" {
+		params.Add("order", order)
+	}
+
+	path := fmt.Sprintf("/tickets?%s", params.Encode())
 
 	var result SearchResult[Ticket]
 	err := s.client.request(ctx, "GET", path, nil, &result)
 	if err != nil {
 		return nil, err
 	}
+	result.Finalize()
 
 	return &result, nil
+}
+
+// Expand fetches full details for each ticket in the search result.
+func (s *TicketService) Expand(ctx context.Context, result *SearchResult[Ticket]) error {
+	for i := range result.Items {
+		var fullTicket Ticket
+		err := s.client.request(ctx, "GET", result.Items[i].URL, nil, &fullTicket)
+		if err != nil {
+			return fmt.Errorf("failed to fetch details for ticket %s: %w", result.Items[i].ID, err)
+		}
+		result.Items[i] = fullTicket
+	}
+	return nil
 }
 
 // SearchBySubject searches for tickets whose subject contains the query string.
@@ -75,7 +100,14 @@ func (s *TicketService) SearchBySubject(ctx context.Context, query string) (*Sea
 	}
 	escaped := strings.ReplaceAll(query, "'", "''")
 	searchQuery := fmt.Sprintf("Subject LIKE '%%%s%%'", escaped)
-	return s.Search(ctx, searchQuery, 1, 20)
+	res, err := s.Search(ctx, searchQuery, "Created", "DESC", 1, 20)
+	if err != nil {
+		return nil, err
+	}
+	if err := s.Expand(ctx, res); err != nil {
+		return nil, err
+	}
+	return res, nil
 }
 
 // Update updates a ticket.
@@ -102,7 +134,21 @@ func (s *TicketService) GetHistory(ctx context.Context, id string) ([]Transactio
 	if err != nil {
 		return nil, err
 	}
+	result.Finalize()
 	return result.Items, nil
+}
+
+// ExpandTransactions fetches full details for a list of transactions.
+func (s *TicketService) ExpandTransactions(ctx context.Context, transactions []Transaction) ([]Transaction, error) {
+	expanded := make([]Transaction, len(transactions))
+	for i, tx := range transactions {
+		full, err := s.GetTransaction(ctx, tx.ID)
+		if err != nil {
+			return nil, fmt.Errorf("failed to fetch transaction %s: %w", tx.ID, err)
+		}
+		expanded[i] = *full
+	}
+	return expanded, nil
 }
 
 // GetTransaction fetches a single transaction by ID with full details.
@@ -136,6 +182,7 @@ func (s *TicketService) GetCorrespondence(ctx context.Context, ticketID string) 
 	if err != nil {
 		return nil, err
 	}
+	result.Finalize()
 	return result.Items, nil
 }
 
