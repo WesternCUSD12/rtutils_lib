@@ -75,6 +75,30 @@ func TestTicketService_Search(t *testing.T) {
 	assert.Equal(t, "T1", result.Items[0].Subject)
 }
 
+func TestTicketService_SearchBySubject(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("GET", "http://rt.example.com/REST/2.0/tickets",
+		func(req *http.Request) (*http.Response, error) {
+			query := req.URL.Query().Get("query")
+			page := req.URL.Query().Get("page")
+			perPage := req.URL.Query().Get("per_page")
+			if query == "Subject LIKE '%Smartboard%'" && page == "1" && perPage == "20" {
+				return httpmock.NewStringResponse(200, `{"total": 1, "page": 1, "per_page": 20, "items": [{"id": "1", "Subject": "Smartboard Issue"}]}`), nil
+			}
+			return httpmock.NewStringResponse(400, "Bad Request"), nil
+		})
+
+	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
+	httpmock.ActivateNonDefault(client.client)
+
+	result, err := client.Tickets.SearchBySubject(context.Background(), "Smartboard")
+	assert.NoError(t, err)
+	assert.Equal(t, 1, result.Total)
+	assert.Equal(t, "Smartboard Issue", result.Items[0].Subject)
+}
+
 func TestTicketService_GetByURL(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

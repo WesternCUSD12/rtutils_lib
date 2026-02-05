@@ -68,6 +68,16 @@ func (s *TicketService) Search(ctx context.Context, query string, page int, perP
 	return &result, nil
 }
 
+// SearchBySubject searches for tickets whose subject contains the query string.
+func (s *TicketService) SearchBySubject(ctx context.Context, query string) (*SearchResult[Ticket], error) {
+	if err := requireNonEmpty("query", query); err != nil {
+		return nil, err
+	}
+	escaped := strings.ReplaceAll(query, "'", "''")
+	searchQuery := fmt.Sprintf("Subject LIKE '%%%s%%'", escaped)
+	return s.Search(ctx, searchQuery, 1, 20)
+}
+
 // Update updates a ticket.
 func (s *TicketService) Update(ctx context.Context, id string, ticket *Ticket) error {
 	path := "/ticket/" + id

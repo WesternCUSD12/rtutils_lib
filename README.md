@@ -35,7 +35,12 @@ Handles all asset-related operations.
 #### Methods
 - `Create(ctx, asset)`: Creates a new asset. Returns the new asset's ID.
 - `Get(ctx, id)`: Fetches an asset by its ID.
-- `Search(ctx, query)`: Searches for assets using a search string (checks Name, ID, Serial Number, and Asset Tag).
+- `Search(ctx, query)`: Searches for assets using AssetSQL.
+- `SearchByNameExact(ctx, name)`: Searches for assets with an exact name match.
+- `SearchByNamePartial(ctx, query)`: Searches for assets with a partial name match.
+- `SearchByCustomFieldExact(ctx, fieldName, value)`: Searches for assets with an exact custom field match.
+- `SearchByCustomFieldPartial(ctx, fieldName, query)`: Searches for assets with a partial custom field match.
+- `SearchWithCriteria(ctx, criteria)`: Searches for assets using JSON search criteria.
 - `Update(ctx, id, asset)`: Updates an existing asset.
 - `Delete(ctx, id)`: Deletes an asset.
 
@@ -59,6 +64,7 @@ Handles ticket management, history, and communication.
 - `Create(ctx, ticket)`: Creates a new ticket. Returns the new ticket's ID.
 - `Get(ctx, id)`: Fetches a ticket by its ID.
 - `Search(ctx, query, page, perPage)`: Searches for tickets using TicketSQL.
+- `SearchBySubject(ctx, query)`: Searches for tickets by subject (partial match).
 - `Update(ctx, id, ticket)`: Updates a ticket.
 - `Comment(ctx, id, text)`: Adds a private comment to a ticket.
 - `Correspond(ctx, id, text)`: Adds public correspondence to a ticket.
@@ -86,6 +92,12 @@ Handles user discovery and management.
 #### Methods
 - `Get(ctx, id)`: Fetches a user by ID or username.
 - `Search(ctx, query)`: Searches for users.
+- `SearchByUsernameExact(ctx, username)`: Searches for users by exact username.
+- `SearchByUsernamePartial(ctx, query)`: Searches for users by partial username.
+- `SearchByEmailExact(ctx, email)`: Searches for users by exact email address.
+- `SearchByEmailPartial(ctx, query)`: Searches for users by partial email address.
+- `SearchByNameExact(ctx, name)`: Searches for users by exact full name.
+- `SearchByNamePartial(ctx, query)`: Searches for users by partial full name.
 - `GetGroupMemberships(ctx, id)`: Returns a list of group names the user belongs to.
 - `AddToGroup(ctx, userID, groupID)` / `RemoveFromGroup(ctx, userID, groupID)`: Manage group memberships.
 

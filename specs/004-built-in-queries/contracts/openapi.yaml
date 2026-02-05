@@ -1,0 +1,375 @@
+openapi: 3.0.3
+info:
+  title: rtutils_lib Built-in Query Methods
+  version: 1.0.0
+  description: Logical contract for library query methods (not a public HTTP API).
+servers: []
+paths:
+  /assets/search/name/exact:
+    post:
+      summary: Search assets by exact name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required: [name]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultAsset"
+  /assets/search/name/partial:
+    post:
+      summary: Search assets by partial name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required: [query]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultAsset"
+  /assets/search/custom-field/exact:
+    post:
+      summary: Search assets by exact custom field value
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fieldName:
+                  type: string
+                value:
+                  type: string
+              required: [fieldName, value]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultAsset"
+        "400":
+          description: Custom field not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+  /assets/search/custom-field/partial:
+    post:
+      summary: Search assets by partial custom field value
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fieldName:
+                  type: string
+                query:
+                  type: string
+              required: [fieldName, query]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultAsset"
+        "400":
+          description: Custom field not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/APIError"
+  /tickets/search/subject:
+    post:
+      summary: Search tickets by subject (partial match)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required: [query]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultTicket"
+  /users/search/username/exact:
+    post:
+      summary: Search users by exact username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required: [username]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultUser"
+  /users/search/username/partial:
+    post:
+      summary: Search users by partial username
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required: [query]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultUser"
+  /users/search/email/exact:
+    post:
+      summary: Search users by exact email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+              required: [email]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultUser"
+  /users/search/email/partial:
+    post:
+      summary: Search users by partial email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required: [query]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultUser"
+  /users/search/name/exact:
+    post:
+      summary: Search users by exact full name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+              required: [name]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultUser"
+  /users/search/name/partial:
+    post:
+      summary: Search users by partial full name
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+              required: [query]
+      responses:
+        "200":
+          description: Search result (first page only)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SearchResultUser"
+components:
+  schemas:
+    Asset:
+      type: object
+      properties:
+        id:
+          type: string
+        Name:
+          type: string
+        Description:
+          type: string
+        Status:
+          type: string
+        CustomFields:
+          type: array
+          items:
+            $ref: "#/components/schemas/AssetCustomField"
+    AssetCustomField:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        values:
+          type: array
+          items:
+            type: string
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: string
+        Subject:
+          type: string
+        Status:
+          type: string
+        Queue:
+          type: string
+        Owner:
+          type: string
+        Requestor:
+          type: array
+          items:
+            type: string
+        CustomFields:
+          type: object
+          additionalProperties: true
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        Name:
+          type: string
+        EmailAddress:
+          type: string
+        NameFirst:
+          type: string
+        NameLast:
+          type: string
+        RealName:
+          type: string
+        Username:
+          type: string
+        Disabled:
+          type: boolean
+    SearchResultAsset:
+      type: object
+      properties:
+        total:
+          type: integer
+        count:
+          type: integer
+        page:
+          type: integer
+        pages:
+          type: integer
+        per_page:
+          type: integer
+        next_page:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Asset"
+    SearchResultTicket:
+      type: object
+      properties:
+        total:
+          type: integer
+        count:
+          type: integer
+        page:
+          type: integer
+        pages:
+          type: integer
+        per_page:
+          type: integer
+        next_page:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ticket"
+    SearchResultUser:
+      type: object
+      properties:
+        total:
+          type: integer
+        count:
+          type: integer
+        page:
+          type: integer
+        pages:
+          type: integer
+        per_page:
+          type: integer
+        next_page:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/User"
+    APIError:
+      type: object
+      properties:
+        statusCode:
+          type: integer
+        message:
+          type: string
+      required: [statusCode, message]

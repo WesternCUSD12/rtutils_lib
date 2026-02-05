@@ -11,6 +11,7 @@ type TicketService interface {
 	Get(ctx context.Context, id string) (*rtutils_lib.Ticket, error)
 	GetByURL(ctx context.Context, url string) (*rtutils_lib.Ticket, error)
 	Search(ctx context.Context, query string, page int, perPage int) (*rtutils_lib.SearchResult[rtutils_lib.Ticket], error)
+	SearchBySubject(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.Ticket], error)
 	Update(ctx context.Context, id string, ticket *rtutils_lib.Ticket) error
 	Delete(ctx context.Context, id string) error
 	GetHistory(ctx context.Context, id string) ([]rtutils_lib.Transaction, error)
@@ -28,6 +29,12 @@ type UserService interface {
 	Create(ctx context.Context, user *rtutils_lib.User) (string, error)
 	Get(ctx context.Context, id string) (*rtutils_lib.User, error)
 	Search(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
+	SearchByUsernameExact(ctx context.Context, username string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
+	SearchByUsernamePartial(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
+	SearchByEmailExact(ctx context.Context, email string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
+	SearchByEmailPartial(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
+	SearchByNameExact(ctx context.Context, name string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
+	SearchByNamePartial(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.User], error)
 	Update(ctx context.Context, id string, user *rtutils_lib.User) error
 	Disable(ctx context.Context, id string) error
 	GetHistory(ctx context.Context, id string) ([]rtutils_lib.Transaction, error)
@@ -41,6 +48,11 @@ type AssetService interface {
 	Create(ctx context.Context, asset *rtutils_lib.Asset) (string, error)
 	Get(ctx context.Context, id string) (*rtutils_lib.Asset, error)
 	Search(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
+	SearchByNameExact(ctx context.Context, name string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
+	SearchByNamePartial(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
+	SearchByCustomFieldExact(ctx context.Context, fieldName string, value string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
+	SearchByCustomFieldPartial(ctx context.Context, fieldName string, query string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
+	SearchWithCriteria(ctx context.Context, criteria []map[string]interface{}) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
 	Update(ctx context.Context, id string, asset *rtutils_lib.Asset) error
 	Delete(ctx context.Context, id string) error
 }

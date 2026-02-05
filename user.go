@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 // UserService handles communication with the user related methods of the
@@ -43,6 +44,54 @@ func (s *UserService) Search(ctx context.Context, query string) (*SearchResult[U
 		return nil, err
 	}
 	return &result, nil
+}
+
+// SearchByUsernameExact searches for users by exact username.
+func (s *UserService) SearchByUsernameExact(ctx context.Context, username string) (*SearchResult[User], error) {
+	if err := requireNonEmpty("username", username); err != nil {
+		return nil, err
+	}
+	return s.Search(ctx, buildUserQuery("Name", username, false))
+}
+
+// SearchByUsernamePartial searches for users by partial username.
+func (s *UserService) SearchByUsernamePartial(ctx context.Context, query string) (*SearchResult[User], error) {
+	if err := requireNonEmpty("query", query); err != nil {
+		return nil, err
+	}
+	return s.Search(ctx, buildUserQuery("Name", query, true))
+}
+
+// SearchByEmailExact searches for users by exact email address.
+func (s *UserService) SearchByEmailExact(ctx context.Context, email string) (*SearchResult[User], error) {
+	if err := requireNonEmpty("email", email); err != nil {
+		return nil, err
+	}
+	return s.Search(ctx, buildUserQuery("EmailAddress", email, false))
+}
+
+// SearchByEmailPartial searches for users by partial email address.
+func (s *UserService) SearchByEmailPartial(ctx context.Context, query string) (*SearchResult[User], error) {
+	if err := requireNonEmpty("query", query); err != nil {
+		return nil, err
+	}
+	return s.Search(ctx, buildUserQuery("EmailAddress", query, true))
+}
+
+// SearchByNameExact searches for users by exact full name.
+func (s *UserService) SearchByNameExact(ctx context.Context, name string) (*SearchResult[User], error) {
+	if err := requireNonEmpty("name", name); err != nil {
+		return nil, err
+	}
+	return s.Search(ctx, buildUserQuery("RealName", name, false))
+}
+
+// SearchByNamePartial searches for users by partial full name.
+func (s *UserService) SearchByNamePartial(ctx context.Context, query string) (*SearchResult[User], error) {
+	if err := requireNonEmpty("query", query); err != nil {
+		return nil, err
+	}
+	return s.Search(ctx, buildUserQuery("RealName", query, true))
 }
 
 // Update updates a user.
@@ -124,4 +173,12 @@ type User struct {
 	EmailAddress string `json:"EmailAddress,omitempty"`
 	Disabled     int    `json:"Disabled,omitempty"`
 	Privileged   int    `json:"Privileged,omitempty"`
+}
+
+func buildUserQuery(field string, value string, partial bool) string {
+	escaped := strings.ReplaceAll(value, "'", "''")
+	if partial {
+		return fmt.Sprintf("%s LIKE '%%%s%%'", field, escaped)
+	}
+	return fmt.Sprintf("%s = '%s'", field, escaped)
 }

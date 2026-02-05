@@ -3,6 +3,7 @@ package rtutils_lib
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 )
 
 // APIError represents an error returned by the Request Tracker API.
@@ -13,6 +14,22 @@ type APIError struct {
 
 func (e *APIError) Error() string {
 	return fmt.Sprintf("RT API Error: %d %s", e.StatusCode, e.Message)
+}
+
+// CustomFieldNotFoundError indicates a requested custom field does not exist in RT.
+type CustomFieldNotFoundError struct {
+	FieldName string
+}
+
+func (e *CustomFieldNotFoundError) Error() string {
+	return fmt.Sprintf("custom field not found: %s", e.FieldName)
+}
+
+func requireNonEmpty(field string, value string) error {
+	if strings.TrimSpace(value) == "" {
+		return fmt.Errorf("%s must not be empty", field)
+	}
+	return nil
 }
 
 // SearchResult represents a paginated search response.
@@ -36,18 +53,18 @@ type ActionResult struct {
 
 // Transaction represents a history entry for an object.
 type Transaction struct {
-	ID          string        `json:"id"`
-	Type        string        `json:"Type"`
-	OldValue    string        `json:"OldValue,omitempty"`
-	NewValue    string        `json:"NewValue,omitempty"`
-	Field       string        `json:"Field,omitempty"`
-	Data        string        `json:"Data,omitempty"`
-	Description string        `json:"Description,omitempty"`
-	Content     string        `json:"Content,omitempty"`
-	Creator     string        `json:"Creator,omitempty"`
-	Created     string        `json:"Created,omitempty"`
-	Attachments []string      `json:"Attachments,omitempty"`
-	Hyperlinks  []Hyperlink   `json:"_hyperlinks,omitempty"`
+	ID          string      `json:"id"`
+	Type        string      `json:"Type"`
+	OldValue    string      `json:"OldValue,omitempty"`
+	NewValue    string      `json:"NewValue,omitempty"`
+	Field       string      `json:"Field,omitempty"`
+	Data        string      `json:"Data,omitempty"`
+	Description string      `json:"Description,omitempty"`
+	Content     string      `json:"Content,omitempty"`
+	Creator     string      `json:"Creator,omitempty"`
+	Created     string      `json:"Created,omitempty"`
+	Attachments []string    `json:"Attachments,omitempty"`
+	Hyperlinks  []Hyperlink `json:"_hyperlinks,omitempty"`
 }
 
 // Hyperlink represents a link reference in API responses
@@ -118,11 +135,11 @@ func parseStringOrObject(field interface{}) string {
 
 // Attachment represents an attachment to a transaction (typically contains comment content)
 type Attachment struct {
-	ID            interface{} `json:"id"`                      // Can be number or string
-	Content       string      `json:"Content,omitempty"`       // Base64-encoded content
+	ID            interface{} `json:"id"`                // Can be number or string
+	Content       string      `json:"Content,omitempty"` // Base64-encoded content
 	ContentType   string      `json:"ContentType,omitempty"`
 	Created       string      `json:"Created,omitempty"`
-	Creator       interface{} `json:"Creator,omitempty"`       // Can be string or object
+	Creator       interface{} `json:"Creator,omitempty"` // Can be string or object
 	Subject       string      `json:"Subject,omitempty"`
 	Headers       string      `json:"Headers,omitempty"`
 	MessageId     string      `json:"MessageId,omitempty"`
