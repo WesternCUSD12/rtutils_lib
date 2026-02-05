@@ -1,50 +1,51 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+  Sync Impact Report:
+  - Version: Template -> 1.0.0
+  - Modified Principles: All (Initial Definition)
+  - Templates Checked: plan.md (Aligned), spec.md (Aligned)
+  - Pending: N/A
+-->
+
+# rtutils_lib Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Idiomatic Go
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+The library MUST use standard Go patterns and the standard library (`net/http`, `encoding/json`) wherever possible. Functions MUST return `(Result, error)`. `context.Context` MUST be the first argument for all IO-bound operations. Code MUST be formatted with `gofmt`.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Interface-First Design
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+All primary service interactions (Tickets, Users, Assets) MUST be defined as Go interfaces in a dedicated `contracts/` package (or equivalent) before implementation. This ensures testability and clear API boundaries. The `Client` struct implements these interfaces.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Test-First (NON-NEGOTIABLE)
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+Test Driven Development (TDD) is mandatory. Tests against the `contracts` MUST be written before the implementation. Unit tests MUST use `testify/assert` or `testify/require`. Mocking strategies MUST be used for unit tests to avoid live API calls.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Type Safety & Validation
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+Leverage Go's type system to ensure correctness. RT Resources (Tickets, Users) MUST be mapped to concrete structs. `map[string]interface{}` is permitted ONLY for `CustomFields` due to their dynamic nature. Input validation (e.g. required ID) MUST occur before the network call.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Error Transparency
+
+Errors MUST NOT be swallowed. HTTP 4xx/5xx responses MUST be wrapped in a structured `APIError` type that exposes the underlying Request Tracker error message or status code to the consumer.
+
+## Implementation Constraints
+
+**Stack**: Go 1.22+.
+**Dependencies**: Zero-dependency policy for the core runtime (HTTP client, JSON parsing). `testify` is allowed for `_test.go` files only.
+**Hypermedia**: The library MUST abstract the `_url` mechanics; users interact with IDs, the library handles the URL resolution internally where advantageous.
+
+## Development Workflow
+
+1. **Spec**: Define the feature in `specs/`.
+2. **Contract**: Define the interface.
+3. **Test**: Write the test case failing.
+4. **Implement**: Write the code to pass.
+5. **Verify**: Run `go test ./...`.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+All Pull Requests MUST include tests covering the new functionality. Changes to `contracts/` are considered breaking changes if they alter existing method signatures and require a MAJOR version bump.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-02-04 | **Last Amended**: 2026-02-04
