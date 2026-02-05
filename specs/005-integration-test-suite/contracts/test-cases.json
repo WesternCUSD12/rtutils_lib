@@ -1,0 +1,272 @@
+{
+  "version": "1.0",
+  "description": "Integration test case definitions for rtutils library",
+  "created": "2026-02-05",
+  "test_cases": [
+    {
+      "id": "ticket-get-1",
+      "method": "TicketService.Get",
+      "service": "Ticket",
+      "operation": "Get",
+      "description": "Fetch a single ticket by ID",
+      "inputs": {
+        "id": "1"
+      },
+      "expected_result_type": "Ticket",
+      "validator_type": "ticket",
+      "enabled": true,
+      "notes": "Assumes ticket #1 exists in RT instance"
+    },
+    {
+      "id": "ticket-getbyurl-1",
+      "method": "TicketService.GetByURL",
+      "service": "Ticket",
+      "operation": "GetByURL",
+      "description": "Fetch ticket by full RT URL",
+      "inputs": {
+        "url": "/REST/2.0/ticket/1"
+      },
+      "expected_result_type": "Ticket",
+      "validator_type": "ticket",
+      "enabled": true,
+      "notes": "Tests URL-based retrieval mechanism"
+    },
+    {
+      "id": "ticket-search-1",
+      "method": "TicketService.Search",
+      "service": "Ticket",
+      "operation": "Search",
+      "description": "Search tickets with TicketSQL query",
+      "inputs": {
+        "query": "Status = 'new' OR Status = 'open'",
+        "page": 1,
+        "per_page": 20
+      },
+      "expected_result_type": "SearchResult[Ticket]",
+      "validator_type": "ticket",
+      "enabled": true,
+      "notes": "Searches for open tickets. Expands summary results to full details"
+    },
+    {
+      "id": "ticket-search-subject-1",
+      "method": "TicketService.SearchBySubject",
+      "service": "Ticket",
+      "operation": "SearchBySubject",
+      "description": "Search tickets by subject substring",
+      "inputs": {
+        "query": "test"
+      },
+      "expected_result_type": "SearchResult[Ticket]",
+      "validator_type": "ticket",
+      "enabled": true,
+      "notes": "Fuzzy match on subject field, no exact match required"
+    },
+    {
+      "id": "user-get-1",
+      "method": "UserService.Get",
+      "service": "User",
+      "operation": "Get",
+      "description": "Fetch a single user by ID or username",
+      "inputs": {
+        "id": "admin"
+      },
+      "expected_result_type": "User",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Assumes 'admin' user exists"
+    },
+    {
+      "id": "user-search-1",
+      "method": "UserService.Search",
+      "service": "User",
+      "operation": "Search",
+      "description": "Search users by query",
+      "inputs": {
+        "query": "Name LIKE '%'"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Returns all users (LIKE '%' matches all names)"
+    },
+    {
+      "id": "user-search-username-exact-1",
+      "method": "UserService.SearchByUsernameExact",
+      "service": "User",
+      "operation": "SearchByUsernameExact",
+      "description": "Find user by exact username",
+      "inputs": {
+        "username": "admin"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Exact match required"
+    },
+    {
+      "id": "user-search-username-partial-1",
+      "method": "UserService.SearchByUsernamePartial",
+      "service": "User",
+      "operation": "SearchByUsernamePartial",
+      "description": "Find users by partial username",
+      "inputs": {
+        "query": "adm"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Partial match using LIKE operator"
+    },
+    {
+      "id": "user-search-email-exact-1",
+      "method": "UserService.SearchByEmailExact",
+      "service": "User",
+      "operation": "SearchByEmailExact",
+      "description": "Find user by exact email address",
+      "inputs": {
+        "email": "admin@example.com"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Exact email match"
+    },
+    {
+      "id": "user-search-email-partial-1",
+      "method": "UserService.SearchByEmailPartial",
+      "service": "User",
+      "operation": "SearchByEmailPartial",
+      "description": "Find users by partial email",
+      "inputs": {
+        "query": "example.com"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Partial email match"
+    },
+    {
+      "id": "user-search-name-exact-1",
+      "method": "UserService.SearchByNameExact",
+      "service": "User",
+      "operation": "SearchByNameExact",
+      "description": "Find user by exact full name",
+      "inputs": {
+        "name": "Administrator"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Exact real name match"
+    },
+    {
+      "id": "user-search-name-partial-1",
+      "method": "UserService.SearchByNamePartial",
+      "service": "User",
+      "operation": "SearchByNamePartial",
+      "description": "Find users by partial full name",
+      "inputs": {
+        "query": "admin"
+      },
+      "expected_result_type": "SearchResult[User]",
+      "validator_type": "user",
+      "enabled": true,
+      "notes": "Partial full name match"
+    },
+    {
+      "id": "asset-get-1",
+      "method": "AssetService.Get",
+      "service": "Asset",
+      "operation": "Get",
+      "description": "Fetch a single asset by ID",
+      "inputs": {
+        "id": "1"
+      },
+      "expected_result_type": "Asset",
+      "validator_type": "asset",
+      "enabled": true,
+      "notes": "Assumes asset #1 exists"
+    },
+    {
+      "id": "asset-search-1",
+      "method": "AssetService.Search",
+      "service": "Asset",
+      "operation": "Search",
+      "description": "Search assets by AssetSQL query",
+      "inputs": {
+        "query": "Name LIKE '%'"
+      },
+      "expected_result_type": "SearchResult[Asset]",
+      "validator_type": "asset",
+      "enabled": true,
+      "notes": "Returns all assets. Expands summary results to full details"
+    },
+    {
+      "id": "asset-search-name-exact-1",
+      "method": "AssetService.SearchByNameExact",
+      "service": "Asset",
+      "operation": "SearchByNameExact",
+      "description": "Find asset by exact name",
+      "inputs": {
+        "name": "Server-01"
+      },
+      "expected_result_type": "SearchResult[Asset]",
+      "validator_type": "asset",
+      "enabled": true,
+      "notes": "Exact name match"
+    },
+    {
+      "id": "asset-search-name-partial-1",
+      "method": "AssetService.SearchByNamePartial",
+      "service": "Asset",
+      "operation": "SearchByNamePartial",
+      "description": "Find assets by partial name",
+      "inputs": {
+        "query": "server"
+      },
+      "expected_result_type": "SearchResult[Asset]",
+      "validator_type": "asset",
+      "enabled": true,
+      "notes": "Partial name match"
+    },
+    {
+      "id": "asset-search-customfield-exact-1",
+      "method": "AssetService.SearchByCustomFieldExact",
+      "service": "Asset",
+      "operation": "SearchByCustomFieldExact",
+      "description": "Find assets by exact custom field value",
+      "inputs": {
+        "fieldName": "Department",
+        "value": "IT"
+      },
+      "expected_result_type": "SearchResult[Asset]",
+      "validator_type": "asset",
+      "enabled": true,
+      "notes": "Custom field search. May be disabled if field doesn't exist"
+    },
+    {
+      "id": "asset-search-customfield-partial-1",
+      "method": "AssetService.SearchByCustomFieldPartial",
+      "service": "Asset",
+      "operation": "SearchByCustomFieldPartial",
+      "description": "Find assets by partial custom field value",
+      "inputs": {
+        "fieldName": "Department",
+        "value": "IT"
+      },
+      "expected_result_type": "SearchResult[Asset]",
+      "validator_type": "asset",
+      "enabled": true,
+      "notes": "Custom field partial search"
+    }
+  ],
+  "metadata": {
+    "total_test_cases": 18,
+    "services": {
+      "Ticket": 4,
+      "User": 8,
+      "Asset": 6
+    },
+    "notes": "All test cases are read-only (GET requests). Phase 1 MVP only. Write operations (Create, Update) can be added in Phase 2 with proper test data management."
+  }
+}
