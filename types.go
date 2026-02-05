@@ -36,17 +36,26 @@ type ActionResult struct {
 
 // Transaction represents a history entry for an object.
 type Transaction struct {
-	ID          string   `json:"id"`
-	Type        string   `json:"Type"`
-	OldValue    string   `json:"OldValue,omitempty"`
-	NewValue    string   `json:"NewValue,omitempty"`
-	Field       string   `json:"Field,omitempty"`
-	Data        string   `json:"Data,omitempty"`
-	Description string   `json:"Description,omitempty"`
-	Content     string   `json:"Content,omitempty"`
-	Creator     string   `json:"Creator,omitempty"`
-	Created     string   `json:"Created,omitempty"`
-	Attachments []string `json:"Attachments,omitempty"`
+	ID          string        `json:"id"`
+	Type        string        `json:"Type"`
+	OldValue    string        `json:"OldValue,omitempty"`
+	NewValue    string        `json:"NewValue,omitempty"`
+	Field       string        `json:"Field,omitempty"`
+	Data        string        `json:"Data,omitempty"`
+	Description string        `json:"Description,omitempty"`
+	Content     string        `json:"Content,omitempty"`
+	Creator     string        `json:"Creator,omitempty"`
+	Created     string        `json:"Created,omitempty"`
+	Attachments []string      `json:"Attachments,omitempty"`
+	Hyperlinks  []Hyperlink   `json:"_hyperlinks,omitempty"`
+}
+
+// Hyperlink represents a link reference in API responses
+type Hyperlink struct {
+	URL  string      `json:"_url,omitempty"`
+	ID   interface{} `json:"id,omitempty"`
+	Ref  string      `json:"ref,omitempty"`
+	Type string      `json:"type,omitempty"`
 }
 
 // UnmarshalJSON handles custom unmarshaling for Transaction to support case-insensitive fields
@@ -105,4 +114,45 @@ func parseStringOrObject(field interface{}) string {
 	}
 
 	return ""
+}
+
+// Attachment represents an attachment to a transaction (typically contains comment content)
+type Attachment struct {
+	ID            interface{} `json:"id"`                      // Can be number or string
+	Content       string      `json:"Content,omitempty"`       // Base64-encoded content
+	ContentType   string      `json:"ContentType,omitempty"`
+	Created       string      `json:"Created,omitempty"`
+	Creator       interface{} `json:"Creator,omitempty"`       // Can be string or object
+	Subject       string      `json:"Subject,omitempty"`
+	Headers       string      `json:"Headers,omitempty"`
+	MessageId     string      `json:"MessageId,omitempty"`
+	Parent        interface{} `json:"Parent,omitempty"`        // Can be number or object
+	TransactionId interface{} `json:"TransactionId,omitempty"` // Can be number or object
+}
+
+// UnmarshalJSON handles custom unmarshaling for Attachment to handle numeric ID
+func (a *Attachment) UnmarshalJSON(data []byte) error {
+	type AttachmentAlias Attachment
+	aux := struct {
+		ID interface{} `json:"id"`
+		*AttachmentAlias
+	}{
+		AttachmentAlias: (*AttachmentAlias)(a),
+	}
+
+	if err := json.Unmarshal(data, &aux); err != nil {
+		return err
+	}
+
+	// Handle ID (can be number or string, convert to string for consistency)
+	switch v := aux.ID.(type) {
+	case string:
+		a.ID = v
+	case float64:
+		a.ID = fmt.Sprintf("%.0f", v)
+	case int:
+		a.ID = fmt.Sprintf("%d", v)
+	}
+
+	return nil
 }

@@ -2,9 +2,11 @@ package rtutils_lib
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strings"
 )
 
 // TicketService handles communication with the ticket related methods of the
@@ -95,13 +97,36 @@ func (s *TicketService) GetHistory(ctx context.Context, id string) ([]Transactio
 
 // GetTransaction fetches a single transaction by ID with full details.
 func (s *TicketService) GetTransaction(ctx context.Context, id string) (*Transaction, error) {
-	path := "/transaction/" + id
+	// Use expand parameter to get all transaction details including attachments
+	path := "/transaction/" + id + "?expand=true"
 	var transaction Transaction
 	err := s.client.request(ctx, "GET", path, nil, &transaction)
 	if err != nil {
 		return nil, err
 	}
 	return &transaction, nil
+}
+
+// GetAttachment fetches an attachment by ID.
+func (s *TicketService) GetAttachment(ctx context.Context, id string) (*Attachment, error) {
+	path := "/attachment/" + id
+	var result Attachment
+	err := s.client.request(ctx, "GET", path, nil, &result)
+	if err != nil {
+		return nil, err
+	}
+	return &result, nil
+}
+
+// GetCorrespondence fetches correspondence/comments for a ticket.
+func (s *TicketService) GetCorrespondence(ctx context.Context, ticketID string) ([]map[string]interface{}, error) {
+	path := "/ticket/" + ticketID + "/correspond"
+	var result SearchResult[map[string]interface{}]
+	err := s.client.request(ctx, "GET", path, nil, &result)
+	if err != nil {
+		return nil, err
+	}
+	return result.Items, nil
 }
 
 // Comment adds a comment to a ticket.
@@ -328,4 +353,36 @@ func parseCustomFields(field interface{}) map[string]interface{} {
 	}
 
 	return nil
+}
+
+// DecodedContent returns the base64-decoded content of the attachment
+func (a *Attachment) DecodedContent() (string, error) {
+	if a.Content == "" {
+		return "", nil
+	}
+
+	decoded, err := base64.StdEncoding.DecodeString(a.Content)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode attachment content: %w", err)
+	}
+
+	return string(decoded), nil
+}
+
+// GetAttachmentIDs returns the IDs of all attachments linked to this transaction
+func (t *Transaction) GetAttachmentIDs() []string {
+	var ids []string
+	for _, hl := range t.Hyperlinks {
+		if hl.Ref == "attachment" {
+			// Extract ID from URL like https://tickets.wc-12.com/REST/2.0/attachment/1206
+			parts := strings.Split(strings.TrimSpace(hl.URL), "/")
+			if len(parts) > 0 {
+				id := parts[len(parts)-1]
+				if id != "" {
+					ids = append(ids, id)
+				}
+			}
+		}
+	}
+	return ids
 }
