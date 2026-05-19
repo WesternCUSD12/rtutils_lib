@@ -52,6 +52,8 @@ type AssetService interface {
 	SearchByNamePartial(ctx context.Context, query string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
 	SearchByCustomFieldExact(ctx context.Context, fieldName string, value string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
 	SearchByCustomFieldPartial(ctx context.Context, fieldName string, query string) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
+	ListCustomFieldValues(ctx context.Context, fieldName string) ([]string, error)
+	ListCustomFieldValuesMap(ctx context.Context, fieldNames []string) (map[string][]string, error)
 	SearchWithCriteria(ctx context.Context, criteria []map[string]interface{}) (*rtutils_lib.SearchResult[rtutils_lib.Asset], error)
 	Update(ctx context.Context, id string, asset *rtutils_lib.Asset) error
 	Delete(ctx context.Context, id string) error

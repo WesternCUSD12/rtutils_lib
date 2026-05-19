@@ -12,13 +12,13 @@ import (
 func main() {
 	client := rtutils_lib.NewClient(os.Getenv("RT_BASE_URL"), os.Getenv("RT_TOKEN"))
 	ctx := context.Background()
-	
+
 	ticket, err := client.Tickets.Get(ctx, "249")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
-	
+
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
 	fmt.Fprintf(w, "ID:\t%s\n", ticket.ID)
 	fmt.Fprintf(w, "Subject:\t%s\n", ticket.Subject)

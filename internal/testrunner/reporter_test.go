@@ -139,19 +139,19 @@ func TestGenerateReport(t *testing.T) {
 
 	results := []TestResult{
 		{
-			TestID:      "TEST001",
-			MethodName:  "Get",
-			Status:      "PASS",
-			DurationMs:  100,
-			StartTime:   time.Now().UTC().Format(time.RFC3339),
+			TestID:     "TEST001",
+			MethodName: "Get",
+			Status:     "PASS",
+			DurationMs: 100,
+			StartTime:  time.Now().UTC().Format(time.RFC3339),
 		},
 		{
-			TestID:      "TEST002",
-			MethodName:  "Search",
-			Status:      "FAIL",
-			ErrorType:   "AssertionFailure",
-			DurationMs:  50,
-			StartTime:   time.Now().UTC().Format(time.RFC3339),
+			TestID:     "TEST002",
+			MethodName: "Search",
+			Status:     "FAIL",
+			ErrorType:  "AssertionFailure",
+			DurationMs: 50,
+			StartTime:  time.Now().UTC().Format(time.RFC3339),
 		},
 	}
 

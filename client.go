@@ -19,10 +19,11 @@ type Client struct {
 	token   string
 	client  *http.Client
 
-	Tickets *TicketService
-	Users   *UserService
-	Assets  *AssetService
-	Queues  *QueueService
+	Tickets      *TicketService
+	Users        *UserService
+	Assets       *AssetService
+	Queues       *QueueService
+	CustomFields *CustomFieldService
 }
 
 // NewClient creates a new Request Tracker API client.
@@ -41,7 +42,13 @@ func NewClient(baseURL, token string) *Client {
 	c.Users = &UserService{client: c}
 	c.Assets = &AssetService{client: c}
 	c.Queues = &QueueService{client: c}
+	c.CustomFields = &CustomFieldService{client: c}
 	return c
+}
+
+// GetBaseURL returns the internal API base URL.
+func (c *Client) GetBaseURL() string {
+	return c.baseURL
 }
 
 // QueueService handles communication with the queue related methods of the RT API.
@@ -164,6 +171,14 @@ func (c *Client) request(ctx context.Context, method, path string, body interfac
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "token "+c.token)
+
+	// Log outgoing request body for debugging (avoid logging token)
+	if reqBody != nil {
+		if b, ok := reqBody.(*bytes.Buffer); ok {
+			// Safe to log: body is JSON marshaled earlier
+			log.Printf("DEBUG: API Request %s %s: %s", method, url, string(b.Bytes()))
+		}
+	}
 
 	resp, err := c.client.Do(req)
 	if err != nil {

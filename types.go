@@ -41,9 +41,10 @@ type SearchResult[T any] struct {
 	PerPage  int    `json:"per_page"`
 	NextPage string `json:"next_page"`
 	Items    []T    `json:"items"`
-	Assets   []T    `json:"assets"`  // Support RT variant
-	Tickets  []T    `json:"tickets"` // Support RT variant
-	Queues   []T    `json:"queues"`  // Support RT variant
+	Assets   []T    `json:"assets"`   // Support RT variant
+	Tickets  []T    `json:"tickets"`  // Support RT variant
+	Queues   []T    `json:"queues"`   // Support RT variant
+	Catalogs []T    `json:"catalogs"` // Support RT catalog variant
 }
 
 // Finalize ensures all variants are merged into Items.
@@ -55,6 +56,8 @@ func (r *SearchResult[T]) Finalize() {
 			r.Items = r.Tickets
 		} else if len(r.Queues) > 0 {
 			r.Items = r.Queues
+		} else if len(r.Catalogs) > 0 {
+			r.Items = r.Catalogs
 		}
 	}
 }
@@ -69,18 +72,18 @@ type ActionResult struct {
 
 // Transaction represents a history entry for an object.
 type Transaction struct {
-	ID          string      `json:"id"`
-	Type        string      `json:"Type"`
-	OldValue    string      `json:"OldValue,omitempty"`
-	NewValue    string      `json:"NewValue,omitempty"`
-	Field       string      `json:"Field,omitempty"`
-	Data        string      `json:"Data,omitempty"`
-	Description string      `json:"Description,omitempty"`
-	Content     string      `json:"Content,omitempty"`
-	Creator     string      `json:"Creator,omitempty"`
-	Created     string      `json:"Created,omitempty"`
-	Attachments []string    `json:"Attachments,omitempty"`
-	Hyperlinks  []Hyperlink `json:"_hyperlinks,omitempty"`
+	ID          string        `json:"id"`
+	Type        string        `json:"Type"`
+	OldValue    string        `json:"OldValue,omitempty"`
+	NewValue    string        `json:"NewValue,omitempty"`
+	Field       string        `json:"Field,omitempty"`
+	Data        string        `json:"Data,omitempty"`
+	Description string        `json:"Description,omitempty"`
+	Content     string        `json:"Content,omitempty"`
+	Creator     string        `json:"Creator,omitempty"`
+	Created     string        `json:"Created,omitempty"`
+	Attachments []interface{} `json:"Attachments,omitempty"`
+	Hyperlinks  []Hyperlink   `json:"_hyperlinks,omitempty"`
 }
 
 // Hyperlink represents a link reference in API responses

@@ -53,9 +53,9 @@ type TestReport struct {
 // NewTestResult creates a new test result with common fields populated
 func NewTestResult(testID, methodName string) *TestResult {
 	return &TestResult{
-		TestID:    testID,
+		TestID:     testID,
 		MethodName: methodName,
-		StartTime: time.Now().UTC().Format(time.RFC3339),
+		StartTime:  time.Now().UTC().Format(time.RFC3339),
 	}
 }
 

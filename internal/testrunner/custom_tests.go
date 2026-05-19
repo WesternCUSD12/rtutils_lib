@@ -11,10 +11,10 @@ import (
 // CustomTestCase extends TestCase with additional fields for custom tests
 type CustomTestCase struct {
 	TestCase
-	Assertions  []string               `json:"assertions"`
-	Tags        []string               `json:"tags,omitempty"`
-	Preconditions []string             `json:"preconditions,omitempty"`
-	CustomFields map[string]interface{} `json:"customFields,omitempty"`
+	Assertions    []string               `json:"assertions"`
+	Tags          []string               `json:"tags,omitempty"`
+	Preconditions []string               `json:"preconditions,omitempty"`
+	CustomFields  map[string]interface{} `json:"customFields,omitempty"`
 }
 
 // CustomTestRegistry maintains custom validators for user-defined test cases
@@ -37,7 +37,7 @@ func (r *CustomTestRegistry) RegisterValidator(name string, validator validators
 	if validator == nil {
 		return fmt.Errorf("validator cannot be nil")
 	}
-	
+
 	r.validators[name] = validator
 	return nil
 }
@@ -102,7 +102,7 @@ func ValidateCustomTestCase(tc CustomTestCase) error {
 // ValidateCustomTestCases validates all custom test cases
 func ValidateCustomTestCases(testCases []CustomTestCase) []error {
 	var errors []error
-	
+
 	seen := make(map[string]bool)
 	for i, tc := range testCases {
 		// Check for duplicate IDs
@@ -228,4 +228,3 @@ func contains(s, substring string) bool {
 	}
 	return false
 }
-

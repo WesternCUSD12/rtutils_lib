@@ -85,14 +85,14 @@ func main() {
 		} else {
 			// Enable only enabled custom tests
 			enabledCustom := testrunner.GetEnabledCustomTests(customTestCases)
-			
+
 			if *debugFlag {
 				fmt.Printf("DEBUG: Loaded %d custom test cases (%d enabled)\n", len(customTestCases), len(enabledCustom))
 			}
 
 			// Merge custom tests with standard tests (custom tests take priority by ID)
 			testCases = testrunner.MergeTestCases(testCases, enabledCustom)
-			
+
 			if *debugFlag {
 				fmt.Printf("DEBUG: Merged to %d total test cases\n", len(testCases))
 			}

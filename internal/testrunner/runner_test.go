@@ -12,16 +12,15 @@ import (
 
 func TestNewTestRunner(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{
 		{
 			ID:            "TEST001",
 			MethodName:    "Get",
-			ServiceType:   "TicketService",
+			ServiceType:   "Ticket",
 			ValidatorType: "TicketValidator",
 			Enabled:       true,
 		},
@@ -38,16 +37,15 @@ func TestNewTestRunner(t *testing.T) {
 
 func TestTestRunnerExecuteTestSuccess(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{
 		{
 			ID:            "TICKET001",
 			MethodName:    "Get",
-			ServiceType:   "TicketService",
+			ServiceType:   "Ticket",
 			ValidatorType: "TicketValidator",
 			Enabled:       true,
 			InputParams: map[string]interface{}{
@@ -68,10 +66,9 @@ func TestTestRunnerExecuteTestSuccess(t *testing.T) {
 
 func TestTestRunnerErrorClassification(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{
 		{
@@ -115,10 +112,9 @@ func TestTestRunnerErrorClassification(t *testing.T) {
 
 func TestTestRunnerMetadataCalculation(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 
 	testCases := []TestCase{
@@ -152,16 +148,15 @@ func TestTestRunnerMetadataCalculation(t *testing.T) {
 
 func TestTestRunnerReportJSON(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{
 		{
 			ID:            "TEST001",
 			MethodName:    "Get",
-			ServiceType:   "TicketService",
+			ServiceType:   "Ticket",
 			ValidatorType: "TicketValidator",
 			Enabled:       true,
 		},
@@ -188,10 +183,9 @@ func TestTestRunnerReportJSON(t *testing.T) {
 
 func TestTestRunnerWriteReport(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{}
 
@@ -208,10 +202,9 @@ func TestTestRunnerWriteReport(t *testing.T) {
 
 func TestTestRunnerGetSummary(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{}
 
@@ -257,10 +250,9 @@ func TestParseMethodResult(t *testing.T) {
 
 func TestTestRunnerStartTimeTracking(t *testing.T) {
 	config := &rtconfig.RTConnection{
-		URL:      "https://rt.example.com",
-		Username: "testuser",
-		Password: "testpass",
-		Timeout:  30,
+		URL:     "https://rt.example.com",
+		Token:   "testtoken",
+		Timeout: 30,
 	}
 	testCases := []TestCase{}
 

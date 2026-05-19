@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+	"sync"
 )
 
 // TicketService handles communication with the ticket related methods of the
@@ -82,14 +83,44 @@ func (s *TicketService) Search(ctx context.Context, query string, orderby string
 
 // Expand fetches full details for each ticket in the search result.
 func (s *TicketService) Expand(ctx context.Context, result *SearchResult[Ticket]) error {
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, 10) // Limit concurrency to 10
+	errChan := make(chan error, len(result.Items))
+
 	for i := range result.Items {
-		var fullTicket Ticket
-		err := s.client.request(ctx, "GET", result.Items[i].URL, nil, &fullTicket)
-		if err != nil {
-			return fmt.Errorf("failed to fetch details for ticket %s: %w", result.Items[i].ID, err)
-		}
-		result.Items[i] = fullTicket
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			sem <- struct{}{}        // Acquire semaphore
+			defer func() { <-sem }() // Release semaphore
+
+			var fullTicket Ticket
+			// Some RT search responses may omit the _url field. If so, fall back
+			// to the standard ticket path using the ID to fetch full details.
+			path := result.Items[i].URL
+			if strings.TrimSpace(path) == "" {
+				if result.Items[i].ID == "" {
+					errChan <- fmt.Errorf("missing URL and ID for ticket item at index %d", i)
+					return
+				}
+				path = "/ticket/" + result.Items[i].ID
+			}
+			err := s.client.request(ctx, "GET", path, nil, &fullTicket)
+			if err != nil {
+				errChan <- fmt.Errorf("failed to fetch details for ticket %s: %w", result.Items[i].ID, err)
+				return
+			}
+			result.Items[i] = fullTicket
+		}(i)
 	}
+
+	wg.Wait()
+	close(errChan)
+
+	if err := <-errChan; err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -141,13 +172,78 @@ func (s *TicketService) GetHistory(ctx context.Context, id string) ([]Transactio
 // ExpandTransactions fetches full details for a list of transactions.
 func (s *TicketService) ExpandTransactions(ctx context.Context, transactions []Transaction) ([]Transaction, error) {
 	expanded := make([]Transaction, len(transactions))
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, 10) // Limit concurrency to 10
+	errChan := make(chan error, len(transactions))
+
 	for i, tx := range transactions {
-		full, err := s.GetTransaction(ctx, tx.ID)
-		if err != nil {
-			return nil, fmt.Errorf("failed to fetch transaction %s: %w", tx.ID, err)
-		}
-		expanded[i] = *full
+		wg.Add(1)
+		go func(i int, tx Transaction) {
+			defer wg.Done()
+			sem <- struct{}{}        // Acquire semaphore
+			defer func() { <-sem }() // Release semaphore
+
+			full, err := s.GetTransaction(ctx, tx.ID)
+			if err != nil {
+				errChan <- fmt.Errorf("failed to fetch transaction %s: %w", tx.ID, err)
+				return
+			}
+			// If content is empty check for attachments in both Attachments field and Hyperlinks
+			if strings.TrimSpace(full.Content) == "" {
+				var attachmentIDs []string
+
+				// 1. Get IDs from Attachments field
+				for _, att := range full.Attachments {
+					switch v := att.(type) {
+					case string:
+						attachmentIDs = append(attachmentIDs, v)
+					case map[string]interface{}:
+						if id, ok := v["id"].(string); ok {
+							attachmentIDs = append(attachmentIDs, id)
+						} else if id, ok := v["id"].(float64); ok {
+							attachmentIDs = append(attachmentIDs, fmt.Sprintf("%.0f", id))
+						}
+					}
+				}
+
+				// 2. Get IDs from Hyperlinks
+				attachmentIDs = append(attachmentIDs, full.GetAttachmentIDs()...)
+
+				// 3. Authenticated fetch for each ID
+				for _, attID := range attachmentIDs {
+					if attID == "" {
+						continue
+					}
+
+					attachment, err := s.GetAttachment(ctx, attID)
+					if err == nil {
+						isText := strings.Contains(attachment.ContentType, "text/plain")
+						isHTML := strings.Contains(attachment.ContentType, "text/html")
+						isMultipart := strings.Contains(attachment.ContentType, "multipart/alternative")
+
+						if isText || isHTML || isMultipart {
+							decoded, err := attachment.DecodedContent()
+							if err == nil {
+								full.Content = decoded
+								break // Found content, stop looking
+							}
+						}
+					}
+				}
+
+			}
+
+			expanded[i] = *full
+		}(i, tx)
 	}
+
+	wg.Wait()
+	close(errChan)
+
+	if err := <-errChan; err != nil {
+		return nil, err
+	}
+
 	return expanded, nil
 }
 
@@ -326,6 +422,8 @@ func parseIDField(field interface{}) string {
 	switch v := field.(type) {
 	case string:
 		return v
+	case json.Number:
+		return v.String()
 	case float64:
 		// JSON unmarshals numbers to float64
 		return fmt.Sprintf("%.0f", v)

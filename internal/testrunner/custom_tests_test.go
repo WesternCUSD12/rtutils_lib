@@ -344,16 +344,16 @@ func TestMergeTestCases(t *testing.T) {
 func TestGetCustomTestsByDescription(t *testing.T) {
 	cases := []CustomTestCase{
 		{
-			TestCase:    TestCase{ID: "T1", Description: "Test ticket retrieval by ID"},
-			Assertions:  []string{"Valid"},
+			TestCase:   TestCase{ID: "T1", Description: "Test ticket retrieval by ID"},
+			Assertions: []string{"Valid"},
 		},
 		{
-			TestCase:    TestCase{ID: "T2", Description: "Test user search by name"},
-			Assertions:  []string{"Valid"},
+			TestCase:   TestCase{ID: "T2", Description: "Test user search by name"},
+			Assertions: []string{"Valid"},
 		},
 		{
-			TestCase:    TestCase{ID: "T3", Description: "Test ticket search with filters"},
-			Assertions:  []string{"Valid"},
+			TestCase:   TestCase{ID: "T3", Description: "Test ticket search with filters"},
+			Assertions: []string{"Valid"},
 		},
 	}
 

@@ -91,6 +91,10 @@ func TestTicketService_SearchBySubject(t *testing.T) {
 			return httpmock.NewStringResponse(400, "Bad Request"), nil
 		})
 
+	// When Expand() fetches details for the found ticket, return full ticket
+	httpmock.RegisterResponder("GET", "http://rt.example.com/REST/2.0/ticket/1",
+		httpmock.NewStringResponder(200, `{"id": "1", "Subject": "Smartboard Issue", "type": "ticket"}`))
+
 	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
 	httpmock.ActivateNonDefault(client.client)
 
