@@ -283,6 +283,34 @@ func TestAssetService_Update(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestAssetService_Update_AcceptsArraySuccessBody(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("PUT", "http://rt.example.com/REST/2.0/asset/1",
+		httpmock.NewStringResponder(200, `["Checked Display Yes added","Checked Screws Yes added"]`))
+
+	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
+	httpmock.ActivateNonDefault(client.client)
+
+	err := client.Assets.Update(context.Background(), "1", &Asset{Name: "NewName"})
+	assert.NoError(t, err)
+}
+
+func TestAssetService_Update_DoesNotMaskOtherDecodeErrors(t *testing.T) {
+	httpmock.Activate()
+	defer httpmock.DeactivateAndReset()
+
+	httpmock.RegisterResponder("PUT", "http://rt.example.com/REST/2.0/asset/1",
+		httpmock.NewStringResponder(200, `{"unexpected":`))
+
+	client := NewClient("http://rt.example.com/REST/2.0", "test-token")
+	httpmock.ActivateNonDefault(client.client)
+
+	err := client.Assets.Update(context.Background(), "1", &Asset{Name: "NewName"})
+	assert.Error(t, err)
+}
+
 func TestAssetService_Delete(t *testing.T) {
 	httpmock.Activate()
 	defer httpmock.DeactivateAndReset()

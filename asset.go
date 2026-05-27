@@ -435,7 +435,18 @@ func (s *AssetService) Update(ctx context.Context, id string, asset *Asset) erro
 	path := "/asset/" + id
 	var result ActionResult
 	err := s.client.request(ctx, "PUT", path, asset, &result)
+	if isActionResultArrayDecodeError(err) {
+		return nil
+	}
 	return err
+}
+
+func isActionResultArrayDecodeError(err error) bool {
+	if err == nil {
+		return false
+	}
+	message := err.Error()
+	return strings.Contains(message, "cannot unmarshal array into Go value of type rtutils_lib.ActionResult")
 }
 
 // UpdateAsset updates an asset and returns the refreshed asset payload.
