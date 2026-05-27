@@ -72,6 +72,28 @@ func (s *AssetService) SearchRaw(ctx context.Context, query string) (*SearchResu
 	return &result, nil
 }
 
+// SearchRawPaged searches for assets using AssetSQL and explicit pagination
+// without expanding each result.
+func (s *AssetService) SearchRawPaged(ctx context.Context, query string, perPage, page int) (*SearchResult[Asset], error) {
+	if isBroadAssetQuery(query) {
+		return nil, errUnsafeBroadAssetQuery
+	}
+	if perPage <= 0 {
+		perPage = 100
+	}
+	if page <= 0 {
+		page = 1
+	}
+	path := fmt.Sprintf("/assets?query=%s&per_page=%d&page=%d", url.QueryEscape(query), perPage, page)
+	var result SearchResult[Asset]
+	err := s.client.request(ctx, "GET", path, nil, &result)
+	if err != nil {
+		return nil, err
+	}
+	result.Finalize()
+	return &result, nil
+}
+
 // Expand fetches full details for each asset in the search result.
 func (s *AssetService) Expand(ctx context.Context, result *SearchResult[Asset]) error {
 	var wg sync.WaitGroup
